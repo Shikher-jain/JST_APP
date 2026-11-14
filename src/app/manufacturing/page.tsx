@@ -62,14 +62,18 @@ function ManufacturingPageContent() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-8 py-12 flex-1 space-y-12">
-        {/* 4 Manufacturing Divisions */}
+        {/* Manufacturing Divisions */}
         <section>
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-slate-900 font-hindi">
-              हमारे 4 विशेषज्ञ उत्पादन प्रभाग
+              {currentLocale === "hi" 
+                ? `हमारे ${profile.manufacturingDivisions.length} विशेषज्ञ उत्पादन प्रभाग` 
+                : `Our ${profile.manufacturingDivisions.length} Specialized Manufacturing Divisions`}
             </h2>
             <p className="text-sm text-slate-600 mt-1">
-              प्रत्येक श्रेणी के आभूषणों, नकदी व शोरूम आवश्यकताओं के लिए समर्पित उत्पादन लाइनें।
+              {currentLocale === "hi"
+                ? "बुलियन सुरक्षा, थोक पायल पारगमन, मखमली पोटली एवं शोरूम बैग्स हेतु समर्पित उत्पादन लाइनें।"
+                : "Dedicated manufacturing lines for bullion vault security, wholesale payal transit, velvet pouches, and luxury packaging."}
             </p>
           </div>
 

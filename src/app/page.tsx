@@ -322,7 +322,7 @@ function HomePageContent() {
               <button
                 type="button"
                 onClick={() => setActiveCategory("all")}
-                className={`text-xs px-3.5 py-1.5 rounded-lg font-medium transition-all ${
+                className={`text-xs px-3.5 py-1.5 rounded-lg font-semibold transition-all ${
                   activeCategory === "all"
                     ? "bg-sarafa-maroon text-white shadow-sm"
                     : "bg-white text-slate-600 border border-slate-200 hover:border-sarafa-gold"
@@ -332,36 +332,47 @@ function HomePageContent() {
               </button>
               <button
                 type="button"
-                onClick={() => setActiveCategory("velvet-pouches")}
-                className={`text-xs px-3.5 py-1.5 rounded-lg font-medium transition-all ${
-                  activeCategory === "velvet-pouches"
+                onClick={() => setActiveCategory("security-bullion")}
+                className={`text-xs px-3.5 py-1.5 rounded-lg font-semibold transition-all ${
+                  activeCategory === "security-bullion"
                     ? "bg-sarafa-maroon text-white shadow-sm"
                     : "bg-white text-slate-600 border border-slate-200 hover:border-sarafa-gold"
                 }`}
               >
-                {dict.categories.velvet}
+                {dict.categories.security}
               </button>
               <button
                 type="button"
-                onClick={() => setActiveCategory("cotton-thellas")}
-                className={`text-xs px-3.5 py-1.5 rounded-lg font-medium transition-all ${
-                  activeCategory === "cotton-thellas"
+                onClick={() => setActiveCategory("wholesale-transit")}
+                className={`text-xs px-3.5 py-1.5 rounded-lg font-semibold transition-all ${
+                  activeCategory === "wholesale-transit"
                     ? "bg-sarafa-maroon text-white shadow-sm"
                     : "bg-white text-slate-600 border border-slate-200 hover:border-sarafa-gold"
                 }`}
               >
-                {dict.categories.cotton}
+                {dict.categories.wholesale}
               </button>
               <button
                 type="button"
-                onClick={() => setActiveCategory("suede-envelopes")}
-                className={`text-xs px-3.5 py-1.5 rounded-lg font-medium transition-all ${
-                  activeCategory === "suede-envelopes"
+                onClick={() => setActiveCategory("pouches")}
+                className={`text-xs px-3.5 py-1.5 rounded-lg font-semibold transition-all ${
+                  activeCategory === "pouches"
                     ? "bg-sarafa-maroon text-white shadow-sm"
                     : "bg-white text-slate-600 border border-slate-200 hover:border-sarafa-gold"
                 }`}
               >
-                {dict.categories.suede}
+                {dict.categories.pouches}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveCategory("carry-bags")}
+                className={`text-xs px-3.5 py-1.5 rounded-lg font-semibold transition-all ${
+                  activeCategory === "carry-bags"
+                    ? "bg-sarafa-maroon text-white shadow-sm"
+                    : "bg-white text-slate-600 border border-slate-200 hover:border-sarafa-gold"
+                }`}
+              >
+                {dict.categories.carryBags}
               </button>
             </div>
           </div>

@@ -166,6 +166,37 @@ export const jstBusinessProfile: BusinessProfile = {
       typicalLeadTime: "7 to 14 working days",
       minimumOrderQty: 200,
     },
+    {
+      id: "div-security-bullion-vault",
+      name: {
+        hi: "उच्च-सुरक्षा बुलियन वॉल्ट व एंटी-थेफ्ट कैरियर प्रभाग",
+        en: "High-Security Bullion Vault & Anti-Theft Carrier Division",
+      },
+      tagline: {
+        hi: "सोने-चांदी की सिल्लियों, नकदी एवं थोक पायल हेतु अभेद्य सुरक्षा थैले",
+        en: "Impenetrable Security Transit Bags for Bullion, Cash & Wholesale Payal",
+      },
+      description: {
+        hi: "एमएलजे एवं आगरा सर्राफा बेंचमार्क पर आधारित गुप्त एंटी-थेफ्ट कम्पार्टमेंट्स, कट-प्रूफ स्टील स्ट्रैप्स, पीवीसी रिजिड फ्रेम और मौसम-रोधी 1000D कॉर्डुरा से निर्मित विशेष ट्रांजिट बैग्स।",
+        en: "Specialized transit carriers engineered with concealed anti-theft compartments, slash-proof steel-core straps, rigid PVC internal framing, and weather-resistant 1000D Cordura.",
+      },
+      keyProducts: [
+        { hi: "सेफकीपर बुलियन व कैश ट्रांजिट वॉल्ट बैग", en: "SafeKeeper Bullion & Cash Transit Vault Bag" },
+        { hi: "मेटल सेफ ज्वैलर व कूरियर शोल्डर बैग", en: "Metal Safe Jeweller Crossbody Bag" },
+        { hi: "एंक्लेटबॉक्स थोक पायल ट्रांसपोर्ट बैकपैक", en: "AnkletBox Agra Payal Transit Backpack" },
+        { hi: "एयरबैग सैंपल मल्टी-कैरियर (डुअल-मोड)", en: "AirBag Sample Multi-Carrier (Briefcase/Backpack)" },
+        { hi: "सिल्वरप्रो हेवी चांदी सिल्ली थैला (50 KG)", en: "SilverPro Heavy Silver Ingot Thella (50 KG)" },
+        { hi: "सिक्योरगो एंटी-थेफ्ट बैकपैक (हिडन बैक ज़िपर)", en: "SecureGo Anti-Theft Bullion Backpack" },
+      ],
+      capabilities: [
+        { hi: "गुप्त एंटी-थेफ्ट वॉल्ट व हिडन रियर ज़िपर तकनीक", en: "Concealed Vault Pockets & 100% Rear-Facing Zipper Engineering" },
+        { hi: "कट-प्रूफ स्टील-वायर स्ट्रैप इंसर्शन", en: "Cut-Proof Internal Stainless Steel Cable Insertion" },
+        { hi: "थोक पायल डिब्बों हेतु मॉड्यूलर रिजिड फ्रेमिंग", en: "Modular Rigid Shelf Framing for Payal Presentation Boxes" },
+        { hi: "360-डिग्री कंटीन्यूअस अंडरबॉडी लोड पालना", en: "360-Degree Continuous Underbody Cradle Webbing (up to 50 KG)" },
+      ],
+      typicalLeadTime: "3 to 7 working days",
+      minimumOrderQty: 5,
+    },
   ],
   materials: [
     {

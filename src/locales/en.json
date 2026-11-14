@@ -37,9 +37,10 @@
   },
   "categories": {
     "all": "All Collections",
-    "velvet": "Velvet Jewellery Pouches",
-    "cotton": "Bullion & Cotton Thellas",
-    "suede": "Showroom Luxury Bags"
+    "security": "High-Security Bullion Vault Bags",
+    "wholesale": "Wholesale Anklet & Jewellery Transit",
+    "pouches": "Jewellery Pouches & Potlis",
+    "carryBags": "Showroom Branded Carry Bags"
   },
   "products": {
     "featuredTitle": "Curated Best-Sellers (प्रमुख संग्रह)",

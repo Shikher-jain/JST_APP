@@ -85,7 +85,29 @@ function ProductsPageContent() {
                   : "bg-stone-100 text-slate-700 hover:bg-stone-200"
               }`}
             >
-              सभी उत्पाद ({initialProducts.length})
+              {dict.categories.all} ({initialProducts.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveCategory("security-bullion")}
+              className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                activeCategory === "security-bullion"
+                  ? "bg-sarafa-maroon text-white shadow-xs"
+                  : "bg-stone-100 text-slate-700 hover:bg-stone-200"
+              }`}
+            >
+              {dict.categories.security}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveCategory("wholesale-transit")}
+              className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                activeCategory === "wholesale-transit"
+                  ? "bg-sarafa-maroon text-white shadow-xs"
+                  : "bg-stone-100 text-slate-700 hover:bg-stone-200"
+              }`}
+            >
+              {dict.categories.wholesale}
             </button>
             <button
               type="button"
@@ -96,7 +118,7 @@ function ProductsPageContent() {
                   : "bg-stone-100 text-slate-700 hover:bg-stone-200"
               }`}
             >
-              आभूषण पोटली (Pouches)
+              {dict.categories.pouches}
             </button>
             <button
               type="button"
@@ -107,7 +129,7 @@ function ProductsPageContent() {
                   : "bg-stone-100 text-slate-700 hover:bg-stone-200"
               }`}
             >
-              बुलियन व कैरी बैग्स (Carry Bags)
+              {dict.categories.carryBags}
             </button>
           </div>
         </div>
