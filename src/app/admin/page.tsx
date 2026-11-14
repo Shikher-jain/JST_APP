@@ -29,7 +29,12 @@ import {
   Scissors,
   LogOut,
   User,
-  Shield
+  Shield,
+  FolderSearch,
+  Check,
+  X,
+  Filter,
+  Eye
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -44,6 +49,11 @@ export default function AdminDashboardPage() {
   const [convertedCdnUrl, setConvertedCdnUrl] = useState("");
   const [parsedFileNameResult, setParsedFileNameResult] = useState<any>(null);
   const [customEnquiries, setCustomEnquiries] = useState<any[]>([]);
+  const [scannedMedia, setScannedMedia] = useState<any[]>([]);
+  const [driveFolderInput, setDriveFolderInput] = useState("1JST_SARAFA_CATALOG_2026_DRIVE_FOLDER");
+  const [isScanningDrive, setIsScanningDrive] = useState(false);
+  const [mediaFilter, setMediaFilter] = useState<"all" | "pending" | "approved_web" | "approved_google" | "rejected">("all");
+  const [mediaActionMessage, setMediaActionMessage] = useState<string | null>(null);
 
   const profile = jstBusinessProfile;
   const products = initialProducts;
@@ -77,6 +87,13 @@ export default function AdminDashboardPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.enquiries) setCustomEnquiries(data.enquiries);
+      })
+      .catch(() => {});
+
+    fetch("/api/admin/drive")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.items) setScannedMedia(data.items);
       })
       .catch(() => {});
   }, [router]);
@@ -140,6 +157,53 @@ export default function AdminDashboardPage() {
       }
     } catch {
       alert("Conversion failed");
+    }
+  };
+
+  const handleScanDriveFolder = async () => {
+    setIsScanningDrive(true);
+    try {
+      const res = await fetch("/api/admin/drive", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "scan", folderId: driveFolderInput }),
+      });
+      const data = await res.json();
+      if (data.success && data.items) {
+        setScannedMedia(data.items);
+        setMediaActionMessage(data.message);
+        setTimeout(() => setMediaActionMessage(null), 4000);
+      }
+    } catch {
+      alert("Folder scan failed");
+    } finally {
+      setIsScanningDrive(false);
+    }
+  };
+
+  const handleUpdateMediaApproval = async (
+    mediaId: string,
+    target: "website" | "google",
+    status: "approved" | "rejected" | "pending"
+  ) => {
+    try {
+      const res = await fetch("/api/admin/drive", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "approve", mediaId, target, status }),
+      });
+      const data = await res.json();
+      if (data.success && data.item) {
+        setScannedMedia((prev) =>
+          prev.map((m) => (m.id === mediaId ? data.item : m))
+        );
+        setMediaActionMessage(data.message);
+        setTimeout(() => setMediaActionMessage(null), 4000);
+      } else {
+        alert(data.message || "Failed to update media status");
+      }
+    } catch {
+      alert("Media update error");
     }
   };
 
@@ -565,16 +629,330 @@ export default function AdminDashboardPage() {
           {/* TAB 4: MEDIA REGISTRY & DRIVE ADAPTER */}
           {activeTab === "media" && (
             <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900 font-hindi">
-                  Google Drive मीडिया एकीकरण व कन्वर्टर
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Google Drive फ़ाइल लिंक्स को उच्च गति CDN लिंक्स में बदलें एवं HLD नेमिंग नियमों की जाँच करें।
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 font-hindi flex items-center gap-2">
+                    <ImageIcon className="w-5 h-5 text-sarafa-maroon" />
+                    Google Drive मीडिया रजिस्ट्री एवं अनुमोदन ग्रिड
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Google Drive कैटलॉग स्कैन करें, HLD 4.2 नेमिंग नियमों की जाँच करें, तथा Section 8.2 के अनुसार वेबसाइट व Google Business Profile के लिए स्वीकृत करें।
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    कुल पंजीकृत मीडिया: {scannedMedia.length}
+                  </span>
+                </div>
               </div>
 
-              {/* Interactive Tool: Drive URL to CDN & Name Validator */}
+              {mediaActionMessage && (
+                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-center gap-2 shadow-xs animate-fade-in">
+                  <Sparkles className="w-4 h-4 text-amber-700 shrink-0" />
+                  <span>{mediaActionMessage}</span>
+                </div>
+              )}
+
+              {/* 1. Live Google Drive Folder Scanner */}
+              <div className="bg-white p-5 sm:p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900 font-hindi flex items-center gap-2">
+                      <FolderSearch className="w-4 h-4 text-sarafa-gold" />
+                      Google Drive कैटलॉग फ़ोल्डर लाइव स्कैनर
+                    </h3>
+                    <p className="text-[11px] text-slate-500">
+                      निर्दिष्ट फ़ोल्डर ID या Drive शेयर लिंक प्रविष्ट कर नए उत्पाद चित्र व ब्रांडिंग मीडिया स्वचालित रूप से खोजें।
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setDriveFolderInput("1JST_SARAFA_CATALOG_2026_DRIVE_FOLDER")}
+                    className="text-[11px] text-sarafa-maroon hover:underline font-semibold"
+                  >
+                    डिफ़ॉल्ट कैटलॉग फ़ोल्डर सेट करें
+                  </button>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="text"
+                    value={driveFolderInput}
+                    onChange={(e) => setDriveFolderInput(e.target.value)}
+                    placeholder="Google Drive फ़ोल्डर ID या लिंक (उदा. 1JST_SARAFA_CATALOG_2026_DRIVE_FOLDER)"
+                    className="flex-1 p-2.5 border border-stone-300 rounded-xl text-xs font-mono focus:outline-none focus:border-sarafa-gold"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleScanDriveFolder}
+                    disabled={isScanningDrive}
+                    className="bg-sarafa-maroon hover:bg-sarafa-maroon-dark text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition-all shadow-xs flex items-center justify-center gap-2 disabled:opacity-60"
+                  >
+                    {isScanningDrive ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        फ़ोल्डर स्कैन हो रहा है...
+                      </>
+                    ) : (
+                      <>
+                        <FolderSearch className="w-4 h-4" />
+                        स्कैन करें (Scan Folder)
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* 2. Interactive Media Approval Grid */}
+              <div className="bg-white p-5 sm:p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900 font-hindi flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      मीडिया अनुमोदन एवं Google सिंक ग्रिड (Media Approval Grid)
+                    </h3>
+                    <p className="text-[11px] text-slate-500">
+                      वेबसाइट कैटलॉग तथा Google Business Profile (Section 8.2) प्रकाशन नियंत्रण।
+                    </p>
+                  </div>
+
+                  {/* Filter Pills */}
+                  <div className="flex flex-wrap gap-1 text-[11px]">
+                    <button
+                      type="button"
+                      onClick={() => setMediaFilter("all")}
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                        mediaFilter === "all"
+                          ? "bg-slate-900 text-white font-bold"
+                          : "bg-stone-100 text-slate-600 hover:bg-stone-200"
+                      }`}
+                    >
+                      सभी ({scannedMedia.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMediaFilter("pending")}
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                        mediaFilter === "pending"
+                          ? "bg-amber-600 text-white font-bold"
+                          : "bg-amber-50 text-amber-800 hover:bg-amber-100"
+                      }`}
+                    >
+                      लंबित (
+                      {
+                        scannedMedia.filter(
+                          (m) =>
+                            m.approvalStatusWebsite === "pending" ||
+                            (m.eligibleForGoogleBusiness && m.approvalStatusGoogle === "pending")
+                        ).length
+                      }
+                      )
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMediaFilter("approved_web")}
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                        mediaFilter === "approved_web"
+                          ? "bg-emerald-700 text-white font-bold"
+                          : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
+                      }`}
+                    >
+                      वेबसाइट स्वीकृत (
+                      {scannedMedia.filter((m) => m.approvalStatusWebsite === "approved").length}
+                      )
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMediaFilter("approved_google")}
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                        mediaFilter === "approved_google"
+                          ? "bg-blue-700 text-white font-bold"
+                          : "bg-blue-50 text-blue-800 hover:bg-blue-100"
+                      }`}
+                    >
+                      Google स्वीकृत (
+                      {scannedMedia.filter((m) => m.approvalStatusGoogle === "approved").length}
+                      )
+                    </button>
+                  </div>
+                </div>
+
+                {/* Grid Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {scannedMedia
+                    .filter((item) => {
+                      if (mediaFilter === "pending") {
+                        return (
+                          item.approvalStatusWebsite === "pending" ||
+                          (item.eligibleForGoogleBusiness && item.approvalStatusGoogle === "pending")
+                        );
+                      }
+                      if (mediaFilter === "approved_web") {
+                        return item.approvalStatusWebsite === "approved";
+                      }
+                      if (mediaFilter === "approved_google") {
+                        return item.approvalStatusGoogle === "approved";
+                      }
+                      return true;
+                    })
+                    .map((item) => {
+                      const meta = item.parsedMetadata || {};
+                      const isWebApproved = item.approvalStatusWebsite === "approved";
+                      const isGoogleApproved = item.approvalStatusGoogle === "approved";
+                      const isGoogleEligible = item.eligibleForGoogleBusiness;
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="bg-stone-50 border border-stone-200 rounded-2xl p-4 flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden"
+                        >
+                          <div>
+                            {/* Card Top: Thumbnail & File Meta */}
+                            <div className="flex items-start gap-3 mb-3">
+                              <div className="w-16 h-16 rounded-xl bg-stone-200 border border-stone-300 flex items-center justify-center shrink-0 overflow-hidden relative">
+                                <ImageIcon className="w-8 h-8 text-stone-400" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4
+                                  className="text-xs font-bold text-slate-900 truncate"
+                                  title={item.name}
+                                >
+                                  {item.name}
+                                </h4>
+                                <div className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">
+                                  ID: {item.driveFileId}
+                                </div>
+                                <div className="text-[10px] text-slate-400 mt-0.5">
+                                  साइज: {Math.round((item.sizeBytes || 500000) / 1024)} KB
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Parsed Metadata Pills (HLD Section 4.2) */}
+                            <div className="flex flex-wrap gap-1.5 mb-3">
+                              <span className="bg-white border border-stone-300 text-slate-800 text-[10px] font-mono px-2 py-0.5 rounded-md font-semibold">
+                                SKU: {meta.productSku}
+                              </span>
+                              {meta.sizeLabel && (
+                                <span className="bg-white border border-stone-300 text-slate-700 text-[10px] px-2 py-0.5 rounded-md">
+                                  साइज़: {meta.sizeLabel}
+                                </span>
+                              )}
+                              <span className="bg-white border border-stone-300 text-slate-700 text-[10px] uppercase px-2 py-0.5 rounded-md">
+                                व्यू: {meta.viewRole}
+                              </span>
+                              <span className="bg-white border border-stone-300 text-slate-500 text-[10px] px-1.5 py-0.5 rounded-md">
+                                {meta.version}
+                              </span>
+                            </div>
+
+                            {/* Policy & Eligibility Badge */}
+                            <div className="mb-4">
+                              {isGoogleEligible ? (
+                                <div className="text-[10px] bg-blue-50 text-blue-800 border border-blue-200 p-2 rounded-lg leading-tight flex items-start gap-1.5">
+                                  <Check className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+                                  <span>
+                                    <strong>Google नीति 8.2:</strong> प्रतिष्ठान या मुख्य लोगो चित्र — Google Business Profile हेतु मान्य।
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="text-[10px] bg-stone-200/60 text-slate-600 border border-stone-300 p-2 rounded-lg leading-tight flex items-start gap-1.5">
+                                  <AlertCircle className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
+                                  <span>
+                                    <strong>Google नीति 8.2:</strong> वेरियंट-विशिष्ट चित्र — Google Business Profile से बाहर, केवल वेबसाइट पर मान्य।
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Approval Controls */}
+                          <div className="pt-3 border-t border-stone-200 space-y-2">
+                            {/* Website Approval Row */}
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-[11px] font-semibold text-slate-700">
+                                वेबसाइट कैटलॉग:
+                              </span>
+                              <div className="flex items-center gap-1">
+                                {isWebApproved ? (
+                                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-semibold px-2 py-0.5 rounded-md border border-emerald-300">
+                                    ✓ लाइव स्वीकृत
+                                  </span>
+                                ) : (
+                                  <span className="bg-amber-100 text-amber-800 text-[10px] font-semibold px-2 py-0.5 rounded-md border border-amber-300">
+                                    लंबित
+                                  </span>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleUpdateMediaApproval(
+                                      item.id,
+                                      "website",
+                                      isWebApproved ? "rejected" : "approved"
+                                    )
+                                  }
+                                  className={`text-[10px] font-bold px-2 py-1 rounded transition-colors ${
+                                    isWebApproved
+                                      ? "bg-stone-200 hover:bg-stone-300 text-slate-700"
+                                      : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                                  }`}
+                                >
+                                  {isWebApproved ? "हटाएँ" : "स्वीकृत करें"}
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Google Business Approval Row */}
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-[11px] font-semibold text-slate-700">
+                                Google Business:
+                              </span>
+                              <div className="flex items-center gap-1">
+                                {isGoogleApproved ? (
+                                  <span className="bg-blue-100 text-blue-800 text-[10px] font-semibold px-2 py-0.5 rounded-md border border-blue-300">
+                                    ✓ सिंक स्वीकृत
+                                  </span>
+                                ) : isGoogleEligible ? (
+                                  <span className="bg-stone-100 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-md border border-stone-200">
+                                    लंबित
+                                  </span>
+                                ) : (
+                                  <span className="bg-stone-100 text-slate-400 text-[10px] px-1.5 py-0.5 rounded-md">
+                                    अपात्र
+                                  </span>
+                                )}
+
+                                {isGoogleEligible && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleUpdateMediaApproval(
+                                        item.id,
+                                        "google",
+                                        isGoogleApproved ? "rejected" : "approved"
+                                      )
+                                    }
+                                    className={`text-[10px] font-bold px-2 py-1 rounded transition-colors ${
+                                      isGoogleApproved
+                                        ? "bg-stone-200 hover:bg-stone-300 text-slate-700"
+                                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                                    }`}
+                                  >
+                                    {isGoogleApproved ? "हटाएँ" : "स्वीकृत करें"}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+
+              {/* 3. Interactive Tool: Drive URL to CDN & Name Validator */}
               <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4">
                 <h3 className="text-sm font-bold text-slate-900 font-hindi">
                   Google Drive लिंक या फ़ाइल नाम टेस्ट करें

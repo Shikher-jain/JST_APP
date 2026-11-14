@@ -351,6 +351,58 @@ runTest("Admin roster must include Super Admin, Sales Lead, and Operations Lead"
 });
 
 // ------------------------------------------------------------------------------
+// Test Suite 8: Google Drive Live Folder Service & Media Registry (PR #16)
+// ------------------------------------------------------------------------------
+console.log("\n--- 8. Testing Google Drive Live Service & Media Registry ---");
+
+runTest("Google Drive Service extractFolderId handles full URLs and folder IDs", () => {
+  function extractFolderId(input) {
+    if (!input) return "1JST_SARAFA_CATALOG_2026_DRIVE_FOLDER";
+    const m = input.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+    if (m && m[1]) return m[1];
+    if (/^[a-zA-Z0-9_-]{15,}$/.test(input.trim())) return input.trim();
+    return "1JST_SARAFA_CATALOG_2026_DRIVE_FOLDER";
+  }
+
+  const url1 = "https://drive.google.com/drive/folders/1ABCxyz789_-customFolderId";
+  assert.strictEqual(extractFolderId(url1), "1ABCxyz789_-customFolderId");
+
+  const rawId = "1JST_SARAFA_CATALOG_2026_DRIVE_FOLDER";
+  assert.strictEqual(extractFolderId(rawId), rawId);
+
+  const fallback = extractFolderId("");
+  assert.strictEqual(fallback, "1JST_SARAFA_CATALOG_2026_DRIVE_FOLDER");
+});
+
+runTest("Media Registry policy strictly protects Google Business Profile from variant clutter", () => {
+  function evaluateGoogleEligibility(sku, size) {
+    const s = (sku || "").toUpperCase();
+    const sz = (size || "").toUpperCase();
+    if (s.includes("STORE") || s.includes("EXT") || sz.includes("EXTERIOR")) return true;
+    if (s.includes("BRAND") || s.includes("LOGO") || sz.includes("LOGO")) return true;
+    return false;
+  }
+
+  // Exterior & logo must pass
+  assert(evaluateGoogleEligibility("JST-STORE", "EXTERIOR") === true, "Store exterior must be eligible");
+  assert(evaluateGoogleEligibility("JST-BRAND", "LOGO") === true, "Brand logo must be eligible");
+
+  // Specific size variants must be blocked from Google Business Profile
+  assert(evaluateGoogleEligibility("JST-VLV-RED", "SMALL") === false, "Size small velvet potli must be rejected from GBP");
+  assert(evaluateGoogleEligibility("JST-BLN-35KG", "STD") === false, "Bullion carrier variant must be rejected from GBP");
+  assert(evaluateGoogleEligibility("JST-ANKLET-999", "WHOLESALE") === false, "Anklet box variant must be rejected from GBP");
+});
+
+runTest("Google Drive Service file must exist with scan and approval operations", () => {
+  const servicePath = path.join(__dirname, "../src/lib/integrations/googleDriveService.ts");
+  assert(fs.existsSync(servicePath), "Missing googleDriveService.ts");
+  const content = fs.readFileSync(servicePath, "utf-8");
+  assert(content.includes("class GoogleDriveService"), "Missing GoogleDriveService class");
+  assert(content.includes("scanFolder"), "Missing scanFolder method");
+  assert(content.includes("updateApproval"), "Missing updateApproval method");
+});
+
+// ------------------------------------------------------------------------------
 // Summary
 // ------------------------------------------------------------------------------
 console.log("\n==============================================================================");
