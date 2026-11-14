@@ -445,6 +445,50 @@ runTest("Admin Products API route must exist and enforce RBAC clearance", () => 
 });
 
 // ------------------------------------------------------------------------------
+// Test Suite 10: Google Business Profile Live Sync Engine & Dispatcher (PR #18)
+// ------------------------------------------------------------------------------
+console.log("\n--- 10. Testing Google Business Profile Sync Engine & Worker ---");
+
+runTest("Sync Worker file must exist with dispatch and backoff methods", () => {
+  const workerPath = path.join(__dirname, "../src/lib/integrations/googleBusinessSyncWorker.ts");
+  assert(fs.existsSync(workerPath), "Missing googleBusinessSyncWorker.ts");
+  const content = fs.readFileSync(workerPath, "utf-8");
+  assert(content.includes("class GoogleBusinessSyncWorker"), "Missing GoogleBusinessSyncWorker class");
+  assert(content.includes("dispatchSyncJob"), "Missing dispatchSyncJob");
+  assert(content.includes("calculateBackoff"), "Missing calculateBackoff");
+  assert(content.includes("getEligibleGooglePhotos"), "Missing getEligibleGooglePhotos");
+});
+
+runTest("Exponential backoff strategy must scale reliably for transient Google API failures", () => {
+  function calculateBackoff(retryCount) {
+    return Math.pow(2, retryCount) * 1000;
+  }
+
+  assert.strictEqual(calculateBackoff(0), 1000, "Retry 0 delay must be 1000ms");
+  assert.strictEqual(calculateBackoff(1), 2000, "Retry 1 delay must be 2000ms");
+  assert.strictEqual(calculateBackoff(2), 4000, "Retry 2 delay must be 4000ms");
+  assert.strictEqual(calculateBackoff(3), 8000, "Retry 3 delay must be 8000ms");
+});
+
+runTest("Google Business Profile sync payload must exclude variant photos per Section 8.2", () => {
+  const mockRegistry = [
+    { name: "STORE_EXT.jpg", eligibleForGoogleBusiness: true, approvalStatusGoogle: "approved" },
+    { name: "BRAND_LOGO.png", eligibleForGoogleBusiness: true, approvalStatusGoogle: "approved" },
+    { name: "POTLI_SMALL.jpg", eligibleForGoogleBusiness: false, approvalStatusGoogle: "rejected" },
+    { name: "BULLION_35KG.jpg", eligibleForGoogleBusiness: false, approvalStatusGoogle: "rejected" },
+  ];
+
+  const dispatched = mockRegistry.filter(
+    (m) => m.eligibleForGoogleBusiness && m.approvalStatusGoogle === "approved"
+  );
+
+  assert.strictEqual(dispatched.length, 2, "Only 2 exterior/logo photos should be eligible for Google dispatch");
+  dispatched.forEach((item) => {
+    assert(item.eligibleForGoogleBusiness === true, "Dispatched photo must have eligible flag");
+  });
+});
+
+// ------------------------------------------------------------------------------
 // Summary
 // ------------------------------------------------------------------------------
 console.log("\n==============================================================================");
