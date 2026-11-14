@@ -159,6 +159,84 @@ function ManufacturingPageContent() {
           </div>
         </section>
 
+        {/* 5-Step Industrial Manufacturing Workflow */}
+        <section className="bg-white p-6 sm:p-8 rounded-2xl border border-stone-200 shadow-sm">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sarafa-maroon mb-2">
+            <Sparkles className="w-4 h-4 text-sarafa-gold" />
+            <span>{currentLocale === "hi" ? "आगरा इन-हाउस विनिर्माण प्रक्रिया" : "Agra In-House Production Engineering"}</span>
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 font-hindi mb-2">
+            {currentLocale === "hi" ? "5-चरणीय सख्त गुणवत्ता नियंत्रण प्रक्रिया" : "5-Stage Rigid Quality Assurance Pipeline"}
+          </h2>
+          <p className="text-sm text-slate-600 mb-8 max-w-3xl">
+            {currentLocale === "hi" 
+              ? "कच्चे माल के घनत्व परीक्षण से लेकर जर्मन हॉट फॉइल स्टैम्पिंग एवं 50 KG लोड-बेयरिंग खिंचाव परीक्षण तक — प्रत्येक थैले की मजबूती की 100% गारंटी।"
+              : "From raw fabric tensile testing to precision German hot foil stamping and 50 KG load-bearing verification — engineered for zero failure."}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div className="p-4 rounded-xl bg-stone-50 border border-stone-200 flex flex-col justify-between">
+              <div>
+                <span className="w-7 h-7 rounded-full bg-sarafa-maroon text-white text-xs font-bold flex items-center justify-center mb-3">1</span>
+                <h4 className="font-bold text-xs text-slate-900 font-hindi mb-1">
+                  {currentLocale === "hi" ? "कच्चा माल व जीएसएम परीक्षण" : "GSM & Fabric Testing"}
+                </h4>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  {currentLocale === "hi" ? "280+ GSM मखमल, 1000D कॉर्डुरा व 18 oz डक कैनवास की रोएँदार एवं खिंचाव क्षमता की जांच।" : "Verifying 280+ GSM velvet plushness, Cordura denier, and duck canvas tensile limits."}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-stone-50 border border-stone-200 flex flex-col justify-between">
+              <div>
+                <span className="w-7 h-7 rounded-full bg-sarafa-maroon text-white text-xs font-bold flex items-center justify-center mb-3">2</span>
+                <h4 className="font-bold text-xs text-slate-900 font-hindi mb-1">
+                  {currentLocale === "hi" ? "सटीक रोटरी डाई-कटिंग" : "Precision Die-Cutting"}
+                </h4>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  {currentLocale === "hi" ? "कस्टम आभूषण डिब्बों एवं सिल्लियों की नाप अनुसार मिलीमीटर तक सटीक कटिंग।" : "Precision hydraulic die-cutting calibrated to jewellery box and bullion dimensions."}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-stone-50 border border-stone-200 flex flex-col justify-between">
+              <div>
+                <span className="w-7 h-7 rounded-full bg-sarafa-maroon text-white text-xs font-bold flex items-center justify-center mb-3">3</span>
+                <h4 className="font-bold text-xs text-slate-900 font-hindi mb-1">
+                  {currentLocale === "hi" ? "जर्मन हॉट फॉइल स्टैम्पिंग" : "German Hot Foil Stamping"}
+                </h4>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  {currentLocale === "hi" ? "हाई-टेंपरेचर ब्रास डाई से सोने-चांदी की फॉइल में शोरूम लोगो व हॉलमार्क की स्पष्ट चमक।" : "High-pressure metallic gold/copper foil stamping of showroom logos and statutory hallmarks."}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-stone-50 border border-stone-200 flex flex-col justify-between">
+              <div>
+                <span className="w-7 h-7 rounded-full bg-sarafa-maroon text-white text-xs font-bold flex items-center justify-center mb-3">4</span>
+                <h4 className="font-bold text-xs text-slate-900 font-hindi mb-1">
+                  {currentLocale === "hi" ? "4-प्लाई इंटरलॉक सिलाई" : "4-Ply Interlock Stitching"}
+                </h4>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  {currentLocale === "hi" ? "मिलिट्री-ग्रेड नायलॉन धागे से 360° रैप-अराउंड वेबिंग व स्टील-रिवेट रिइन्फोर्समेंट।" : "Heavy-gauge bonded nylon thread with 360° underbody continuous wrap-around webbing."}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-stone-50 border border-stone-200 flex flex-col justify-between">
+              <div>
+                <span className="w-7 h-7 rounded-full bg-sarafa-maroon text-white text-xs font-bold flex items-center justify-center mb-3">5</span>
+                <h4 className="font-bold text-xs text-slate-900 font-hindi mb-1">
+                  {currentLocale === "hi" ? "100% लोड परीक्षण व बंडलिंग" : "100% Load-Bearing Test"}
+                </h4>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  {currentLocale === "hi" ? "35 से 50 KG वजन पर हैंडल की मजबूती जांचने के बाद वाटरप्रूफ बंडल पैकिंग।" : "Destructive pull-testing of handles up to 50 KG followed by moisture-proof bundling."}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Custom Printing & Branding Workflow */}
         <section className="bg-gradient-to-br from-amber-50 to-orange-50/40 p-6 sm:p-8 rounded-2xl border border-amber-200 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">

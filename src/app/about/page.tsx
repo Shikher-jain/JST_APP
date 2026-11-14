@@ -64,25 +64,46 @@ function AboutPageContent() {
       <main className="max-w-5xl mx-auto px-4 sm:px-8 py-12 flex-1 space-y-12">
         {/* Core Narrative */}
         <section className="bg-white p-6 sm:p-8 rounded-2xl border border-stone-200 shadow-sm">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4 font-hindi border-b border-amber-100 pb-3">
-            तीन दशकों की विश्वसनीयता एवं परंपरा
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sarafa-maroon mb-2">
+            <Sparkles className="w-4 h-4 text-sarafa-gold" />
+            <span>{currentLocale === "hi" ? "आगरा सर्राफा की विरासत एवं सत्यनिष्ठा" : "Agra Sarafa Heritage & Provenance"}</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4 font-hindi border-b border-amber-100 pb-3">
+            {currentLocale === "hi" ? "तीन दशकों की अटूट विश्वसनीयता एवं प्रामाणिक निर्माण" : "Over 35 Years of Manufacturing Trust in Agra's Jewellery Heartland"}
           </h2>
           <p className="text-slate-700 leading-relaxed text-base mb-6">
-            {profile.about.fullNarrative[currentLocale]}
+            {currentLocale === "hi"
+              ? "सन 1988 में आगरा के ऐतिहासिक सर्राफा बाजार (चौक) में स्थापित 'जैन सराफा थैला' केवल एक थैला निर्माता नहीं, बल्कि उत्तर भारत के आभूषण व्यापार का एक अभिन्न सुरक्षा एवं पैकेजिंग स्तंभ है। आगरा, जो देश की प्रसिद्ध चांदी पायल (पाजेब) निर्माण की राजधानी है, वहां साधारण बैग काम नहीं करते। चांदी की भारी ईंटें, बारीक कड़ियों वाली पायल और करोड़ों के सोने के गहनों को ऐसे बैग्स की आवश्यकता होती है जो न तो रास्ते में वजन से फटें और न ही भीड़ में ब्लेड से काटे जा सकें। पिछले साढ़े तीन दशकों से हमारी इन-हाउस निर्माण इकाई आगरा में सर्राफा व्यापारियों, थोक निर्माताओं और प्रमुख आभूषण शोरूम्स को अटूट विश्वसनीयता प्रदान कर रही है।"
+              : "Established in 1988 in the historic Sarafa Bazar (Chowk) of Agra, Jain Sarafa Thella (JST) is an integral operational partner to North India's jewellery and bullion trade. In Agra, the historic capital of India's silver anklet (payal) craftsmanship, ordinary luggage fails. Heavy smelted silver bars, delicate silver chains, and high-value gold bullion demand bags that will never burst at the seams under extreme tonnage or succumb to knife-slashing in congested bazaars. For over 35 years, our in-house Agra production facility has delivered uncompromising strength, anti-tarnish protection, and bespoke branding directly to jewellers across India."}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-stone-100">
             <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-200/50">
               <div className="text-2xl font-bold text-sarafa-maroon font-hindi">1988 से</div>
-              <div className="text-xs text-slate-600 mt-1">आगरा सराफा बाजार में अनवरत सेवा</div>
+              <div className="text-xs text-slate-700 font-semibold mt-1">
+                {currentLocale === "hi" ? "आगरा सर्राफा बाजार (चौक) में अनवरत सेवा" : "Continuous Operations in Agra Sarafa Bazar"}
+              </div>
+              <div className="text-xs text-slate-500 mt-0.5">
+                {currentLocale === "hi" ? "35+ वर्षों का व्यापारिक अनुभव" : "35+ Years of Trade Trust"}
+              </div>
             </div>
             <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-200/50">
-              <div className="text-2xl font-bold text-sarafa-maroon font-hindi">10,000+</div>
-              <div className="text-xs text-slate-600 mt-1">संतुष्ट जौहरी व व्यावसायिक ग्राहक</div>
+              <div className="text-2xl font-bold text-sarafa-maroon font-hindi">दोहरी विशेषज्ञता</div>
+              <div className="text-xs text-slate-700 font-semibold mt-1">
+                {currentLocale === "hi" ? "लक्जरी पैकेजिंग + हेवी बुलियन सुरक्षा" : "Luxury Packaging + Bullion Transit"}
+              </div>
+              <div className="text-xs text-slate-500 mt-0.5">
+                {currentLocale === "hi" ? "मखमली पोटली से 50 KG थैलों तक" : "Velvet Potlis to 50 KG Thellas"}
+              </div>
             </div>
             <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-200/50">
               <div className="text-2xl font-bold text-sarafa-maroon font-hindi">100% इन-हाउस</div>
-              <div className="text-xs text-slate-600 mt-1">डाई कटिंग, सिलाई एवं गोल्ड फॉइल स्टैम्पिंग</div>
+              <div className="text-xs text-slate-700 font-semibold mt-1">
+                {currentLocale === "hi" ? "डाई कटिंग, सिलाई एवं जर्मन हॉट फॉयल" : "Rotary Cutting & Hot Foil Stamping"}
+              </div>
+              <div className="text-xs text-slate-500 mt-0.5">
+                {currentLocale === "hi" ? "शून्य बिचौलिया, सीधे कारखाना भाव" : "Factory Direct, Zero Middlemen"}
+              </div>
             </div>
           </div>
         </section>

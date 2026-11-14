@@ -1,16 +1,16 @@
 {
   "site": {
     "name": "Jain Sarafa Thella",
-    "tagline": "Agra Sarafa's 35-Year Heritage in Premium Jewellery Pouches & Specialty Bag Manufacturing",
-    "location": "Chowk, Sarafa Bazar, Agra, Uttar Pradesh - 282001",
+    "tagline": "Direct from Agra Sarafa Bazar • Over 35 Years of Manufacturing Heritage",
+    "location": "Chowk, Sarafa Bazar (Near Johri Market), Agra, Uttar Pradesh - 282001",
     "phone": "+91 98765 43210"
   },
   "nav": {
     "home": "Home",
     "catalog": "Product Catalog",
     "pouches": "Jewellery Pouches",
-    "cottonBags": "Cotton Thellas",
-    "weddingBags": "Wedding & Gift Bags",
+    "cottonBags": "Bullion Thellas",
+    "weddingBags": "Showroom Bags",
     "wholesale": "Wholesale B2B Portal",
     "customOrder": "Custom Branding & Printing",
     "trackOrder": "Track Order",
@@ -18,22 +18,22 @@
     "login": "Login"
   },
   "hero": {
-    "badge": "Direct from Agra Manufacturing Facility • 100% Authentic",
-    "title": "Engineered Packaging for Precious Jewellery & Heavy Bullion",
-    "subtitle": "280 GSM plush velvet potlis, 16 oz industrial bullion carrier thellas, and metallic hot-foil showroom bags. Factory-direct pricing with zero middlemen markups.",
-    "ctaRetail": "Shop Retail Collection",
-    "ctaWholesale": "Access Wholesale Tiers (B2B)",
-    "ctaCustom": "Order Custom Branding"
+    "badge": "Direct from Agra Sarafa Bazar • Over 35 Years of Manufacturing Heritage",
+    "title": "Engineered Packaging & Transit Carriers for Fine Jewellery, Silver Bullion & Heavy Cash",
+    "subtitle": "Engineered specifically for jewellery showrooms, bullion houses, and wholesale silver merchants. From 280 GSM plush velvet potlis with anti-tarnish silk lining to certified 50 KG heavy-duty bullion carriers — manufactured in Agra and delivered directly at factory pricing.",
+    "ctaRetail": "Browse Ready Stock",
+    "ctaWholesale": "Wholesale B2B Pricing Slabs",
+    "ctaCustom": "Order Custom Branding & OEM"
   },
   "features": {
-    "quality": "Certified Raw Materials",
-    "qualityDesc": "280+ GSM velvet, anti-tarnish silk lining, and 16 oz heavy-duty duck canvas.",
-    "pricing": "Transparent Factory Rates",
-    "pricingDesc": "Transparent retail and wholesale pricing slabs straight from the production floor.",
-    "custom": "Gold & Silver Hot Foil Stamping",
-    "customDesc": "Crisp metallic stamping with your showroom name, address, and statutory hallmarks.",
-    "delivery": "Secure Pan-India Logistics",
-    "deliveryDesc": "Doorstep insured delivery with real-time GPS courier tracking across India."
+    "quality": "Certified Industrial Materials",
+    "qualityDesc": "280+ GSM plush velvet, anti-tarnish silk lining, 1000D Cordura, and 18 oz heavy duck canvas.",
+    "pricing": "Transparent Factory-Direct Rates",
+    "pricingDesc": "Eliminates distributor markups with transparent retail prices and tiered wholesale volume slabs.",
+    "custom": "German Hot Foil & Screen Printing",
+    "customDesc": "Crisp metallic foil stamping with your showroom name, contact numbers, and statutory hallmarks.",
+    "delivery": "Insured Pan-India Logistics",
+    "deliveryDesc": "Moisture-sealed packaging, real-time GPS tracking, and valid GST input tax invoices."
   },
   "categories": {
     "all": "All Collections",
