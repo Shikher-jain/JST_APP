@@ -58,6 +58,14 @@ export interface ProductVariant {
     width: number;
     gusset?: number;
   };
+  dimensionsDetail?: {
+    length: number;
+    width: number;
+    height?: number;
+    gusset?: number;
+    unit: "inch" | "cm" | "mm";
+  };
+  loadCapacity?: string;
   retailPrice: number;
   wholesaleTiers: {
     minQty: number;
@@ -69,13 +77,30 @@ export interface ProductVariant {
   physicalStock: number;
   reservedStock: number;
   images: string[];
+  variantRoleImages?: {
+    front?: string;
+    back?: string;
+    side?: string;
+    dimensions?: string;
+  };
 }
 
 export interface Product {
   id: string;
   baseSku: string;
+  slug?: string;
   title: LocalizedString;
   description: LocalizedString;
+  whatItIs?: LocalizedString;
+  applications?: LocalizedString[];
+  problemsSolved?: LocalizedString[];
+  targetUsers?: LocalizedString[];
+  commonLocations?: LocalizedString[];
+  manufacturingProcess?: LocalizedString;
+  customizationOptions?: LocalizedString[];
+  importantFeatures?: LocalizedString[];
+  mainImage?: string;
+  galleryImages?: string[];
   categorySlug: string;
   productType: ProductType;
   material: LocalizedString;
