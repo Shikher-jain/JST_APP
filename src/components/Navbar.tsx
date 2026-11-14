@@ -136,23 +136,41 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Nav Links */}
-          <div className="hidden md:flex items-center gap-5 text-sm font-medium">
+          <div className="hidden md:flex items-center gap-4 text-xs lg:text-sm font-medium">
             <Link
               href="/"
               className="text-sarafa-ivory hover:text-sarafa-gold transition-colors"
             >
               {dict.nav.home}
             </Link>
-            <a
-              href="#catalog"
+            <Link
+              href="/products"
               className="text-sarafa-ivory hover:text-sarafa-gold transition-colors"
             >
-              {dict.nav.catalog}
-            </a>
+              उत्पाद (Products)
+            </Link>
+            <Link
+              href="/manufacturing"
+              className="text-sarafa-ivory hover:text-sarafa-gold transition-colors"
+            >
+              विनिर्माण (Manufacturing)
+            </Link>
+            <Link
+              href="/about"
+              className="text-sarafa-ivory hover:text-sarafa-gold transition-colors"
+            >
+              परिचय (About)
+            </Link>
+            <Link
+              href="/contact"
+              className="text-sarafa-ivory hover:text-sarafa-gold transition-colors"
+            >
+              संपर्क (Contact)
+            </Link>
             <button
               type="button"
               onClick={onOpenWholesale}
-              className="px-3 py-1 rounded-md bg-sarafa-gold/20 text-sarafa-gold border border-sarafa-gold/40 hover:bg-sarafa-gold hover:text-sarafa-maroon-dark transition-all font-semibold flex items-center gap-1.5"
+              className="px-2.5 py-1 rounded-md bg-sarafa-gold/20 text-sarafa-gold border border-sarafa-gold/40 hover:bg-sarafa-gold hover:text-sarafa-maroon-dark transition-all font-semibold flex items-center gap-1"
             >
               <Building2 className="w-3.5 h-3.5" />
               <span>{dict.nav.wholesale}</span>
@@ -201,7 +219,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-3 pt-3 border-t border-white/20 flex flex-col gap-3">
+          <div className="md:hidden mt-3 pt-3 border-t border-white/20 flex flex-col gap-2">
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
@@ -209,13 +227,34 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               {dict.nav.home}
             </Link>
-            <a
-              href="#catalog"
+            <Link
+              href="/products"
               onClick={() => setMobileMenuOpen(false)}
               className="py-1.5 text-sarafa-ivory font-medium"
             >
-              {dict.nav.catalog}
-            </a>
+              उत्पाद कैटलॉग (Products)
+            </Link>
+            <Link
+              href="/manufacturing"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-1.5 text-sarafa-ivory font-medium"
+            >
+              विनिर्माण (Manufacturing)
+            </Link>
+            <Link
+              href="/about"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-1.5 text-sarafa-ivory font-medium"
+            >
+              हमारे बारे में (About Us)
+            </Link>
+            <Link
+              href="/contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-1.5 text-sarafa-ivory font-medium"
+            >
+              संपर्क (Contact Us)
+            </Link>
             <button
               type="button"
               onClick={() => {
