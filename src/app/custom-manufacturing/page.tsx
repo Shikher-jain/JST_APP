@@ -224,8 +224,48 @@ function CustomManufacturingPageContent() {
             </div>
           </div>
         ) : (
-          /* Interactive Bag Configurator */
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="space-y-8">
+            {/* 5-Stage Transparent Bespoke Lifecycle */}
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-stone-200 shadow-sm">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sarafa-maroon mb-2">
+                <Sparkles className="w-4 h-4 text-sarafa-gold" />
+                <span>{currentLocale === "hi" ? "कस्टम निर्माण की 5-चरणीय पारदर्शी प्रक्रिया" : "5-Stage Transparent Bespoke OEM Lifecycle"}</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 font-hindi mb-2">
+                {currentLocale === "hi" ? "आपकी नाप, आपका कपड़ा, आपकी ब्रास डाई — शून्य जोखिम" : "Your Exact Dimensions, Chosen Fabric, Custom Brass Die"}
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 mb-6">
+                {currentLocale === "hi"
+                  ? "आगरा इन-हाउस निर्माण केंद्र द्वारा प्रत्येक कस्टम ऑर्डर को 5 चरणों में सटीकता से पूरा किया जाता है।"
+                  : "Every custom showroom packaging run is engineered in our Agra facility across five transparent milestones."}
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs">
+                <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/60">
+                  <span className="font-bold text-sarafa-maroon block mb-1">1. नाप व कपड़ा चयन</span>
+                  <p className="text-[11px] text-slate-600">बॉक्स या सिल्लियों की आंतरिक नाप (इंच/मिमी) व जीएसएम निर्धारण।</p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/60">
+                  <span className="font-bold text-sarafa-maroon block mb-1">2. ब्रास डाई उत्कीर्णन</span>
+                  <p className="text-[11px] text-slate-600">शोरूम लोगो व हॉलमार्क की हाई-डेंसिटी ब्रास डाई मेकिंग।</p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/60">
+                  <span className="font-bold text-sarafa-maroon block mb-1">3. 48-घंटे अप्रूवल</span>
+                  <p className="text-[11px] text-slate-600">डिजिटल 3D मॉकअप एवं बल्क ऑर्डर्स (200+) पर फिजिकल मास्टर सैंपल।</p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/60">
+                  <span className="font-bold text-sarafa-maroon block mb-1">4. बैच उत्पादन व सिलाई</span>
+                  <p className="text-[11px] text-slate-600">ऑटो डाई कटिंग, जर्मन हॉट फॉयल स्टैम्पिंग एवं इंटरलॉक सिलाई।</p>
+                </div>
+                <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/60">
+                  <span className="font-bold text-sarafa-maroon block mb-1">5. बीमित डिलीवरी</span>
+                  <p className="text-[11px] text-slate-600">वाटरप्रूफ बंडल पैकिंग व पक्के जीएसटी इनवॉइस के साथ देशव्यापी शिपिंग।</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Bag Configurator */}
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left 2 Cols: Form Options */}
             <div className="lg:col-span-2 space-y-6">
               {/* Step 1: Bag Silhouette */}
@@ -492,8 +532,9 @@ function CustomManufacturingPageContent() {
               </div>
             </div>
           </form>
-        )}
-      </main>
+        </div>
+      )}
+    </main>
 
       <Footer currentLocale={currentLocale} />
       <CartDrawer currentLocale={currentLocale} />

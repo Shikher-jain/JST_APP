@@ -61,7 +61,7 @@ function ContactPageContent() {
             <div className="space-y-6">
               <div>
                 <div className="text-xs font-semibold text-sarafa-maroon uppercase tracking-wider mb-1">
-                  मुख्य प्रतिष्ठान
+                  {currentLocale === "hi" ? "मुख्य व्यापारिक केंद्र एवं निर्माण इकाई" : "Headquarters & Manufacturing Hub"}
                 </div>
                 <h2 className="text-xl font-bold text-slate-900 font-hindi mb-2">
                   {profile.headquarters.name[currentLocale]}
@@ -70,6 +70,11 @@ function ContactPageContent() {
                   {profile.headquarters.addressLine1}, {profile.headquarters.addressLine2}<br />
                   {profile.headquarters.city}, {profile.headquarters.state} - {profile.headquarters.pincode}
                 </p>
+                <div className="mt-2 text-xs text-amber-900 bg-amber-50/80 p-2.5 rounded-lg border border-amber-200/60 leading-relaxed">
+                  {currentLocale === "hi"
+                    ? "आगरा सर्राफा बाजार (चौक) स्थित मुख्य विक्रय काउंटर — निकट जौहरी बाजार एवं नमकमंडी। सर्राफा व्यापारियों, थोक निर्माताओं एवं कूरियर कर्मियों का विश्वसनीय केंद्र।"
+                    : "Located in the heart of Agra Sarafa Bazar (Chowk), near Johri Market and Namak Mandi — North India's trusted bullion and jewellery packaging hub."}
+                </div>
               </div>
 
               <div className="space-y-3 pt-4 border-t border-stone-100 text-sm">
