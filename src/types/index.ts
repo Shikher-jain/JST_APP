@@ -122,3 +122,114 @@ export interface Quotation {
   status: "draft" | "sent" | "accepted" | "rejected" | "expired";
   pdfUrl?: string;
 }
+
+
+// ==============================================================================
+// Extended Types — Business Identity, Manufacturing & Media Registry
+// ==============================================================================
+
+export interface BusinessLocation {
+  id: string;
+  name: LocalizedString;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  stateCode: string;
+  pincode: string;
+  country: string;
+  phone: string;
+  email: string;
+  isHeadquarters: boolean;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  googleMapsUrl?: string;
+}
+
+export interface BusinessHours {
+  dayOfWeek: "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+  openTime: string; // e.g. "10:30"
+  closeTime: string; // e.g. "20:30"
+  isClosed: boolean;
+}
+
+export interface ManufacturingDivision {
+  id: string;
+  name: LocalizedString;
+  tagline: LocalizedString;
+  description: LocalizedString;
+  keyProducts: LocalizedString[];
+  capabilities: LocalizedString[];
+  typicalLeadTime: string;
+  minimumOrderQty: number;
+}
+
+export interface MaterialSpecification {
+  id: string;
+  name: LocalizedString;
+  description: LocalizedString;
+  availableGsmOrWeight: string;
+  primaryUses: LocalizedString[];
+  durability: "standard" | "high" | "heavy_duty";
+  ecoFriendly: boolean;
+}
+
+export interface BusinessProfile {
+  legalName: string;
+  tradeName: string;
+  tagline: LocalizedString;
+  foundedYear: number;
+  location: string;
+  headquarters: BusinessLocation;
+  operatingHours: BusinessHours[];
+  about: {
+    shortIntro: LocalizedString;
+    fullNarrative: LocalizedString;
+    mission: LocalizedString;
+    heritage: LocalizedString;
+  };
+  manufacturingDivisions: ManufacturingDivision[];
+  materials: MaterialSpecification[];
+  customizationOptions: {
+    printMethods: LocalizedString[];
+    sizesSupported: LocalizedString[];
+    accessories: LocalizedString[];
+    minimumCustomBatch: number;
+    advanceDepositPercent: number;
+  };
+  qualityAssurance: {
+    steps: LocalizedString[];
+    certifications: string[];
+  };
+  targetSegments: {
+    title: LocalizedString;
+    description: LocalizedString;
+    recommendedProducts: string[];
+  }[];
+  statutory: {
+    gstin: string;
+    pan: string;
+    hsnCodes: string[];
+    stateCode: string;
+  };
+}
+
+export interface MediaAsset {
+  id: string;
+  driveFileId?: string;
+  driveFolderId?: string;
+  productId?: string;
+  variantId?: string;
+  mediaType: "image" | "video" | "document";
+  mediaRole: "main" | "gallery" | "variant_front" | "variant_back" | "variant_side" | "dimensions" | "brand_logo" | "factory";
+  fileName: string;
+  mimeType: string;
+  fileHash?: string;
+  fileSize?: number;
+  publicUrl: string;
+  status: "discovered" | "validating" | "validated" | "processing" | "ready" | "pending_approval" | "published" | "archived";
+  createdAt: string;
+  updatedAt: string;
+}
