@@ -1,0 +1,84 @@
+{
+  "site": {
+    "name": "Jain Sarafa Thella",
+    "tagline": "Agra's Trusted Jewellery & Packaging Bag Manufacturer",
+    "location": "Chowk, Sarafa Bazar, Agra, Uttar Pradesh",
+    "phone": "+91 98765 43210"
+  },
+  "nav": {
+    "home": "Home",
+    "catalog": "All Products",
+    "pouches": "Jewellery Pouches",
+    "cottonBags": "Cotton Thellas",
+    "weddingBags": "Wedding & Gift Bags",
+    "wholesale": "Wholesale Portal",
+    "customOrder": "Custom Enquiry",
+    "trackOrder": "Track Order",
+    "cart": "Cart",
+    "login": "Login"
+  },
+  "hero": {
+    "badge": "Direct from Agra Manufacturing Unit",
+    "title": "Premium Packaging Bags for Jewellery & Special Occasions",
+    "subtitle": "Velvet potlis, zari drawstring pouches, 100% eco-friendly cotton bags, and customized branding. Available at factory retail and wholesale rates.",
+    "ctaRetail": "Shop Retail Collection",
+    "ctaWholesale": "View Wholesale Pricing",
+    "ctaCustom": "Order Custom Branding"
+  },
+  "features": {
+    "quality": "Superior Craftsmanship",
+    "qualityDesc": "Premium velvet, satin, and heavy-duty organic cotton fabrics.",
+    "pricing": "Direct Manufacturer Rates",
+    "pricingDesc": "Best retail and wholesale prices with zero middlemen markups.",
+    "custom": "Gold Foil & Screen Printing",
+    "customDesc": "Precision stamping with your jewellery brand logo and details.",
+    "delivery": "Pan-India Secure Shipping",
+    "deliveryDesc": "Safe doorstep delivery with live tracking across India."
+  },
+  "categories": {
+    "all": "All Categories",
+    "velvet": "Velvet Pouches",
+    "cotton": "Cotton Thellas",
+    "suede": "Suede Envelopes"
+  },
+  "products": {
+    "featuredTitle": "Featured Best-Sellers",
+    "featuredSubtitle": "Top choice of jewelers and retail clients across North India",
+    "viewAll": "Explore All 50+ Products",
+    "readyStock": "Ready Stock",
+    "madeToOrder": "Made to Order",
+    "customOnly": "Custom Print",
+    "moq": "MOQ:",
+    "pieces": "pcs",
+    "perPiece": "/ pc",
+    "addToCart": "Add to Cart",
+    "requestQuote": "Request Quote"
+  },
+  "wholesale": {
+    "bannerTitle": "Are You a Jeweler or Retail Merchant?",
+    "bannerSubtitle": "Access tiered wholesale rates from 50 to 10,000+ pieces with GST input credit tax invoices.",
+    "registerCta": "Register Wholesale Account",
+    "loginCta": "Wholesale Login"
+  },
+  "custom": {
+    "title": "Get Customized Bags with Your Brand Name",
+    "subtitle": "Tailored sizes, colors, fabrics, and your custom logo. Minimum 250 pieces.",
+    "formTitle": "Bespoke Manufacturing Enquiry",
+    "name": "Your Name / Firm Name",
+    "phone": "WhatsApp Mobile Number",
+    "bagType": "Bag Style",
+    "quantity": "Required Quantity (pcs)",
+    "submit": "Get Free Quotation"
+  },
+  "footer": {
+    "about": "Jain Sarafa Thella is Agra's premier packaging manufacturer, crafting heritage-grade jewellery pouches and commercial shopping bags for Indian jewellers and celebratory events for decades.",
+    "quickLinks": "Quick Links",
+    "legal": "Legal & Policies",
+    "privacy": "Privacy Policy (DPDP)",
+    "terms": "Terms of Service",
+    "returns": "Returns & Refund Policy",
+    "shipping": "Shipping & Fulfilment",
+    "compliance": "Registered under Consumer Protection (E-Commerce) Rules, 2020. Grievance Officer: Shri R. K. Jain (grievance@jainsarafathella.com).",
+    "rights": "All rights reserved. Jain Sarafa Thella, Agra."
+  }
+}
