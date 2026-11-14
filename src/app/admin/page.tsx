@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { jstBusinessProfile } from "@/lib/businessProfile";
 import { initialProducts } from "@/lib/mockData";
 import { GoogleDriveAdapter } from "@/lib/integrations/googleDriveAdapter";
 import { formatCurrencyINR } from "@/lib/i18n";
+import { AdminRole, AdminUser, getRoleBadgeInfo, hasRoleAccess } from "@/lib/auth";
 import { 
   Building2, 
   Layers, 
@@ -24,10 +26,17 @@ import {
   ExternalLink,
   ChevronRight,
   ArrowRight,
-  Scissors
+  Scissors,
+  LogOut,
+  User,
+  Shield
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<AdminUser | null>(null);
+  const [loadingSession, setLoadingSession] = useState(true);
+
   const [activeTab, setActiveTab] = useState<"overview" | "products" | "profile" | "media" | "sync" | "custom">("overview");
   const [syncStatus, setSyncStatus] = useState<any>(null);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -45,6 +54,20 @@ export default function AdminDashboardPage() {
   );
 
   useEffect(() => {
+    // 1. Verify authenticated administrative session
+    fetch("/api/auth/session")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setCurrentUser(data.user);
+        } else {
+          router.push("/admin/login?from=/admin");
+        }
+      })
+      .catch(() => router.push("/admin/login?from=/admin"))
+      .finally(() => setLoadingSession(false));
+
+    // 2. Fetch admin data
     fetch("/api/admin/sync")
       .then((res) => res.json())
       .then((data) => setSyncStatus(data))
@@ -56,7 +79,17 @@ export default function AdminDashboardPage() {
         if (data.enquiries) setCustomEnquiries(data.enquiries);
       })
       .catch(() => {});
-  }, []);
+  }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/admin/login");
+      router.refresh();
+    } catch {
+      router.push("/admin/login");
+    }
+  };
 
   const triggerSync = async (target: string) => {
     setIsSyncing(true);
@@ -118,12 +151,29 @@ export default function AdminDashboardPage() {
     setParsedFileNameResult(parsed);
   };
 
+  if (loadingSession) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-300">
+        <div className="w-10 h-10 border-4 border-gold-500/20 border-t-gold-500 rounded-full animate-spin mb-4" />
+        <p className="text-sm font-semibold tracking-wide text-gold-400">
+          प्रशासनिक प्रमाणीकरण की पुष्टि हो रही है...
+        </p>
+        <p className="text-xs text-slate-500 mt-1">
+          Verifying cryptographic session signature
+        </p>
+      </div>
+    );
+  }
+
+  const roleBadge = currentUser ? getRoleBadgeInfo(currentUser.role) : null;
+  const userRole = currentUser?.role || "super_admin";
+
   return (
     <div className="min-h-screen bg-stone-100 flex flex-col font-sans">
       {/* Admin Top Header */}
-      <header className="bg-slate-900 text-white px-6 py-4 border-b border-slate-800 flex items-center justify-between shadow-md">
+      <header className="bg-slate-900 text-white px-6 py-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4 shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-gold-gradient text-sarafa-maroon-dark font-bold text-lg flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg bg-gold-gradient text-sarafa-maroon-dark font-bold text-lg flex items-center justify-center shrink-0">
             जै
           </div>
           <div>
@@ -139,14 +189,42 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-xs">
+        <div className="flex items-center gap-3 text-xs">
+          {/* Authenticated User & Role Badge */}
+          {currentUser && roleBadge && (
+            <div className="flex items-center gap-2 bg-slate-800/90 border border-slate-700/80 px-3 py-1.5 rounded-xl">
+              <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <div className="text-left hidden sm:block">
+                <div className="text-[11px] font-semibold text-slate-200 leading-tight">
+                  {currentUser.name}
+                </div>
+                <div className="text-[10px] text-slate-400 leading-tight">
+                  {currentUser.email}
+                </div>
+              </div>
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${roleBadge.bg} ${roleBadge.text} ${roleBadge.border}`}>
+                {roleBadge.label}
+              </span>
+            </div>
+          )}
+
           <Link
             href="/"
-            className="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700"
+            className="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700"
           >
             <Globe className="w-3.5 h-3.5 text-sarafa-gold" />
-            <span>लाइव वेबसाइट देखें (View Storefront)</span>
+            <span className="hidden sm:inline">लाइव वेबसाइट देखें (View Storefront)</span>
           </Link>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            title="लॉगआउट (Sign Out)"
+            className="flex items-center gap-1.5 text-red-300 hover:text-red-200 transition-colors bg-red-950/40 hover:bg-red-900/50 px-3 py-1.5 rounded-xl border border-red-800/50 font-semibold"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">लॉगआउट</span>
+          </button>
         </div>
       </header>
 
@@ -158,6 +236,8 @@ export default function AdminDashboardPage() {
             <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-3 mb-2">
               प्रबंधन मॉड्यूल (Management)
             </div>
+            
+            {/* Overview (All roles) */}
             <button
               type="button"
               onClick={() => setActiveTab("overview")}
@@ -170,6 +250,8 @@ export default function AdminDashboardPage() {
               <Layers className="w-4 h-4 text-sarafa-gold" />
               <span>सिस्टम अवलोकन (Overview)</span>
             </button>
+
+            {/* Products (All roles) */}
             <button
               type="button"
               onClick={() => setActiveTab("products")}
@@ -182,54 +264,70 @@ export default function AdminDashboardPage() {
               <Package className="w-4 h-4 text-sarafa-gold" />
               <span>उत्पाद कैटलॉग (Products & Sizes)</span>
             </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("profile")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === "profile"
-                  ? "bg-sarafa-maroon text-white shadow-sm"
-                  : "hover:bg-slate-800 text-slate-400 hover:text-white"
-              }`}
-            >
-              <Building2 className="w-4 h-4 text-sarafa-gold" />
-              <span>प्रतिष्ठान विवरण (Business Profile)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("media")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === "media"
-                  ? "bg-sarafa-maroon text-white shadow-sm"
-                  : "hover:bg-slate-800 text-slate-400 hover:text-white"
-              }`}
-            >
-              <ImageIcon className="w-4 h-4 text-sarafa-gold" />
-              <span>Google Drive मीडिया (Media Registry)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("sync")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === "sync"
-                  ? "bg-sarafa-maroon text-white shadow-sm"
-                  : "hover:bg-slate-800 text-slate-400 hover:text-white"
-              }`}
-            >
-              <RefreshCw className="w-4 h-4 text-sarafa-gold" />
-              <span>सिंक्रोनाइज़ेशन मॉनिटर (Sync Engine)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("custom")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === "custom"
-                  ? "bg-sarafa-maroon text-white shadow-sm"
-                  : "hover:bg-slate-800 text-slate-400 hover:text-white"
-              }`}
-            >
-              <Scissors className="w-4 h-4 text-sarafa-gold" />
-              <span>कस्टम ऑर्डर व कोटेशन CRM</span>
-            </button>
+
+            {/* Profile (Super Admin only) */}
+            {hasRoleAccess(userRole, ["super_admin"]) && (
+              <button
+                type="button"
+                onClick={() => setActiveTab("profile")}
+                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === "profile"
+                    ? "bg-sarafa-maroon text-white shadow-sm"
+                    : "hover:bg-slate-800 text-slate-400 hover:text-white"
+                }`}
+              >
+                <Building2 className="w-4 h-4 text-sarafa-gold" />
+                <span>प्रतिष्ठान विवरण (Business Profile)</span>
+              </button>
+            )}
+
+            {/* Media Registry (Super Admin & Ops) */}
+            {hasRoleAccess(userRole, ["super_admin", "admin_ops"]) && (
+              <button
+                type="button"
+                onClick={() => setActiveTab("media")}
+                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === "media"
+                    ? "bg-sarafa-maroon text-white shadow-sm"
+                    : "hover:bg-slate-800 text-slate-400 hover:text-white"
+                }`}
+              >
+                <ImageIcon className="w-4 h-4 text-sarafa-gold" />
+                <span>Google Drive मीडिया (Media Registry)</span>
+              </button>
+            )}
+
+            {/* Sync Engine (Super Admin & Ops) */}
+            {hasRoleAccess(userRole, ["super_admin", "admin_ops"]) && (
+              <button
+                type="button"
+                onClick={() => setActiveTab("sync")}
+                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === "sync"
+                    ? "bg-sarafa-maroon text-white shadow-sm"
+                    : "hover:bg-slate-800 text-slate-400 hover:text-white"
+                }`}
+              >
+                <RefreshCw className="w-4 h-4 text-sarafa-gold" />
+                <span>सिंक्रोनाइज़ेशन मॉनिटर (Sync Engine)</span>
+              </button>
+            )}
+
+            {/* Custom CRM (Super Admin & Sales) */}
+            {hasRoleAccess(userRole, ["super_admin", "admin_sales"]) && (
+              <button
+                type="button"
+                onClick={() => setActiveTab("custom")}
+                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeTab === "custom"
+                    ? "bg-sarafa-maroon text-white shadow-sm"
+                    : "hover:bg-slate-800 text-slate-400 hover:text-white"
+                }`}
+              >
+                <Scissors className="w-4 h-4 text-sarafa-gold" />
+                <span>कस्टम ऑर्डर व कोटेशन CRM</span>
+              </button>
+            )}
           </div>
 
           <div className="pt-4 border-t border-slate-800 text-[11px] text-slate-500 space-y-1">

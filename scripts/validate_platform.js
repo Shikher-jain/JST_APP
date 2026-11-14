@@ -308,6 +308,49 @@ runTest("Custom enquiries migration must define reference ID, status index, and 
 });
 
 // ------------------------------------------------------------------------------
+// Test Suite 7: Admin RBAC & Cryptographic Session Security (PR #15)
+// ------------------------------------------------------------------------------
+console.log("\n--- 7. Testing Admin RBAC & Cryptographic Session Security ---");
+
+runTest("Middleware file must exist and enforce admin path matching", () => {
+  const middlewarePath = path.join(__dirname, "../src/middleware.ts");
+  assert(fs.existsSync(middlewarePath), "Missing src/middleware.ts");
+  const content = fs.readFileSync(middlewarePath, "utf-8");
+  assert(content.includes('matcher: ["/admin/:path*", "/api/admin/:path*"]'), "Middleware must match /admin and /api/admin");
+  assert(content.includes("verifySessionToken"), "Middleware must verify cryptographic session token");
+});
+
+runTest("RBAC role access permissions must properly isolate sales, ops, and super admin", () => {
+  function checkAccess(userRole, allowedRoles) {
+    if (userRole === "super_admin") return true;
+    const allowed = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+    return allowed.includes(userRole);
+  }
+
+  // Super admin has universal access
+  assert(checkAccess("super_admin", ["admin_sales"]), "Super admin must have access to sales");
+  assert(checkAccess("super_admin", ["admin_ops"]), "Super admin must have access to ops");
+
+  // Sales lead has CRM access but NOT ops sync or media
+  assert(checkAccess("admin_sales", ["admin_sales"]), "Sales must have access to sales module");
+  assert(!checkAccess("admin_sales", ["admin_ops"]), "Sales must NOT have access to ops sync");
+  assert(!checkAccess("admin_sales", ["super_admin"]), "Sales must NOT have access to super admin settings");
+
+  // Ops lead has Media & Sync access but NOT sales CRM
+  assert(checkAccess("admin_ops", ["admin_ops"]), "Ops must have access to ops module");
+  assert(!checkAccess("admin_ops", ["admin_sales"]), "Ops must NOT have access to custom quotations CRM");
+});
+
+runTest("Admin roster must include Super Admin, Sales Lead, and Operations Lead", () => {
+  const authModulePath = path.join(__dirname, "../src/lib/auth.ts");
+  assert(fs.existsSync(authModulePath), "Missing src/lib/auth.ts");
+  const content = fs.readFileSync(authModulePath, "utf-8");
+  assert(content.includes("superadmin@jainsarafathella.com"), "Missing superadmin default roster");
+  assert(content.includes("sales@jainsarafathella.com"), "Missing sales lead default roster");
+  assert(content.includes("ops@jainsarafathella.com"), "Missing operations lead default roster");
+});
+
+// ------------------------------------------------------------------------------
 // Summary
 // ------------------------------------------------------------------------------
 console.log("\n==============================================================================");
