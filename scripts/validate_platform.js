@@ -277,6 +277,37 @@ runTest("Transit products must enforce anti-theft, cut-proofing, or rigid frame 
 });
 
 // ------------------------------------------------------------------------------
+// Test Suite 6: Central Database Client & Migration Schema Integrity
+// ------------------------------------------------------------------------------
+console.log("\n--- 6. Testing Database Layer & Migration Schema Integrity ---");
+
+const fs = require("fs");
+const path = require("path");
+
+runTest("Database schema migration files must exist and contain valid PostgreSQL DDL", () => {
+  const migrations = [
+    "20261025000000_init_schema.sql",
+    "20261115000000_central_management_schema.sql",
+    "20261116000000_custom_enquiries_crm.sql",
+  ];
+
+  migrations.forEach((m) => {
+    const filePath = path.join(__dirname, "../supabase/migrations", m);
+    assert(fs.existsSync(filePath), `Missing migration: ${m}`);
+    const content = fs.readFileSync(filePath, "utf-8");
+    assert(content.includes("CREATE TABLE"), `Migration ${m} missing CREATE TABLE`);
+  });
+});
+
+runTest("Custom enquiries migration must define reference ID, status index, and quotations foreign key", () => {
+  const crmMigration = path.join(__dirname, "../supabase/migrations/20261116000000_custom_enquiries_crm.sql");
+  const sql = fs.readFileSync(crmMigration, "utf-8");
+  assert(sql.includes("reference_id VARCHAR(50) UNIQUE NOT NULL"), "Missing reference_id");
+  assert(sql.includes("idx_custom_enquiries_status"), "Missing status index");
+  assert(sql.includes("REFERENCES custom_enquiries(id)"), "Missing foreign key relationship to quotations");
+});
+
+// ------------------------------------------------------------------------------
 // Summary
 // ------------------------------------------------------------------------------
 console.log("\n==============================================================================");
