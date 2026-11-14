@@ -51,28 +51,23 @@ export const Footer: React.FC<FooterProps> = ({ currentLocale }) => {
             </h3>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="#catalog" className="hover:text-white transition-colors">
-                  {dict.nav.pouches} (Jewellery Pouches)
+                <Link href="/products" className="hover:text-white transition-colors">
+                  उत्पाद कैटलॉग (All Products)
                 </Link>
               </li>
               <li>
-                <Link href="#catalog" className="hover:text-white transition-colors">
-                  {dict.nav.cottonBags} (Cotton Shopping Thellas)
+                <Link href="/manufacturing" className="hover:text-white transition-colors">
+                  विनिर्माण क्षमताएं (Manufacturing)
                 </Link>
               </li>
               <li>
-                <Link href="#catalog" className="hover:text-white transition-colors">
-                  {dict.nav.weddingBags} (Wedding Shagun Potlis)
+                <Link href="/about" className="hover:text-white transition-colors">
+                  हमारे बारे में (About Us)
                 </Link>
               </li>
               <li>
-                <Link href="#wholesale" className="hover:text-sarafa-gold transition-colors font-medium">
-                  {dict.nav.wholesale} (B2B Bulk Portal)
-                </Link>
-              </li>
-              <li>
-                <Link href="#custom" className="hover:text-sarafa-gold transition-colors font-medium">
-                  {dict.nav.customOrder} (Custom Screen & Gold Foil)
+                <Link href="/contact" className="hover:text-white transition-colors">
+                  संपर्क एवं दुकान का पता (Contact)
                 </Link>
               </li>
             </ul>
