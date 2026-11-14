@@ -23,16 +23,18 @@ import {
   Sparkles,
   ExternalLink,
   ChevronRight,
-  ArrowRight
+  ArrowRight,
+  Scissors
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<"overview" | "products" | "profile" | "media" | "sync">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "products" | "profile" | "media" | "sync" | "custom">("overview");
   const [syncStatus, setSyncStatus] = useState<any>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [testDriveLink, setTestDriveLink] = useState("");
   const [convertedCdnUrl, setConvertedCdnUrl] = useState("");
   const [parsedFileNameResult, setParsedFileNameResult] = useState<any>(null);
+  const [customEnquiries, setCustomEnquiries] = useState<any[]>([]);
 
   const profile = jstBusinessProfile;
   const products = initialProducts;
@@ -46,6 +48,13 @@ export default function AdminDashboardPage() {
     fetch("/api/admin/sync")
       .then((res) => res.json())
       .then((data) => setSyncStatus(data))
+      .catch(() => {});
+
+    fetch("/api/custom-enquiries")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.enquiries) setCustomEnquiries(data.enquiries);
+      })
       .catch(() => {});
   }, []);
 
@@ -61,6 +70,43 @@ export default function AdminDashboardPage() {
       setSyncStatus(updated);
     } finally {
       setIsSyncing(false);
+    }
+  };
+
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    try {
+      const res = await fetch("/api/custom-enquiries", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCustomEnquiries((prev) =>
+          prev.map((item) => (item.id === id ? data.enquiry : item))
+        );
+      }
+    } catch {
+      alert("Failed to update status");
+    }
+  };
+
+  const handleConvertToVariant = async (id: string) => {
+    try {
+      const res = await fetch("/api/custom-enquiries", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, convertToVariant: true }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCustomEnquiries((prev) =>
+          prev.map((item) => (item.id === id ? data.enquiry : item))
+        );
+        alert(data.message);
+      }
+    } catch {
+      alert("Conversion failed");
     }
   };
 
@@ -171,6 +217,18 @@ export default function AdminDashboardPage() {
             >
               <RefreshCw className="w-4 h-4 text-sarafa-gold" />
               <span>सिंक्रोनाइज़ेशन मॉनिटर (Sync Engine)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("custom")}
+              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === "custom"
+                  ? "bg-sarafa-maroon text-white shadow-sm"
+                  : "hover:bg-slate-800 text-slate-400 hover:text-white"
+              }`}
+            >
+              <Scissors className="w-4 h-4 text-sarafa-gold" />
+              <span>कस्टम ऑर्डर व कोटेशन CRM</span>
             </button>
           </div>
 
@@ -530,6 +588,145 @@ export default function AdminDashboardPage() {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: CUSTOM MANUFACTURING CRM & CONVERTER (PHASE 3) */}
+          {activeTab === "custom" && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 font-hindi">
+                    कस्टम विनिर्माण पूछताछ एवं कोटेशन CRM (Phase 3)
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    ग्राहक विनिर्देशों की समीक्षा करें, लाइफसाइकिल स्थिति अद्यतन करें एवं लोकप्रिय नाप को मानक SKU में बदलें।
+                  </p>
+                </div>
+                <Link
+                  href="/custom-manufacturing"
+                  target="_blank"
+                  className="text-xs bg-sarafa-maroon text-white font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 hover:bg-sarafa-maroon-dark transition-colors shrink-0"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>पब्लिक कस्टम बिल्डर देखें</span>
+                </Link>
+              </div>
+
+              {/* Enquiries List */}
+              <div className="space-y-4">
+                {customEnquiries.length > 0 ? (
+                  customEnquiries.map((enq) => (
+                    <div
+                      key={enq.id}
+                      className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs space-y-4"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
+                        <div>
+                          <div className="text-xs font-mono font-bold text-sarafa-maroon flex items-center gap-2">
+                            <span>{enq.referenceId}</span>
+                            <span className="text-[10px] text-slate-400 font-normal">
+                              ({new Date(enq.createdAt).toLocaleDateString()})
+                            </span>
+                          </div>
+                          <h3 className="text-base font-bold text-slate-900 font-hindi">
+                            {enq.shopName}
+                          </h3>
+                          <div className="text-xs text-slate-500">
+                            संपर्क: {enq.contactPerson} • {enq.phone} • {enq.city}
+                          </div>
+                        </div>
+
+                        {/* Status Lifecycle Dropdown */}
+                        <div className="flex items-center gap-2">
+                          <label className="text-[11px] text-slate-500 font-medium">स्थिति (Status):</label>
+                          <select
+                            value={enq.status}
+                            onChange={(e) => handleStatusChange(enq.id, e.target.value)}
+                            className="text-xs p-1.5 border border-stone-300 rounded-lg bg-white font-semibold text-slate-800"
+                          >
+                            <option value="submitted">1. दर्ज हुआ (Submitted)</option>
+                            <option value="under_review">2. समीक्षा में (Under Review)</option>
+                            <option value="spec_confirmed">3. नाप पक्की हुई (Spec Confirmed)</option>
+                            <option value="quotation_sent">4. कोटेशन भेजा गया (Quotation Sent)</option>
+                            <option value="approved">5. स्वीकृत (Approved)</option>
+                            <option value="in_production">6. उत्पादन में (In Production)</option>
+                            <option value="completed">7. पूर्ण (Completed)</option>
+                            <option value="rejected">अस्वीकृत (Rejected)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Specs Matrix */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-stone-50 p-3.5 rounded-xl border border-stone-200 text-xs">
+                        <div>
+                          <span className="text-slate-500 block text-[10px]">बैग का प्रकार:</span>
+                          <strong className="text-slate-800">{enq.bagType}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-500 block text-[10px]">कस्टम नाप:</span>
+                          <strong className="text-slate-800">
+                            {enq.dimensions.width}x{enq.dimensions.height}
+                            {enq.dimensions.gusset ? `x${enq.dimensions.gusset}` : ""} {enq.dimensions.unit}
+                          </strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-500 block text-[10px]">कपड़ा / जीएसएम:</span>
+                          <strong className="text-slate-800">{enq.material}</strong>
+                        </div>
+                        <div>
+                          <span className="text-slate-500 block text-[10px]">लोगो / ब्रांडिंग:</span>
+                          <strong className="text-slate-800">{enq.brandingTechnique}</strong>
+                        </div>
+                      </div>
+
+                      {/* Financials & Action Buttons */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs">
+                        <div className="flex items-center gap-4">
+                          <span>
+                            मात्रा: <strong>{enq.targetQuantity} पीस</strong>
+                          </span>
+                          <span>
+                            अनुमानित दर: <strong className="text-sarafa-maroon">{formatCurrencyINR(enq.estimatedUnitRate)}</strong>/पीस
+                          </span>
+                          <span>
+                            कुल: <strong className="text-emerald-700 font-bold">{formatCurrencyINR(enq.estimatedTotal)}</strong>
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          {/* Phase 3: Convert to standard variant button */}
+                          {enq.isConvertedToVariant ? (
+                            <span className="bg-emerald-100 text-emerald-800 font-mono text-[11px] font-semibold px-2.5 py-1 rounded-lg border border-emerald-300">
+                              ✓ मानक SKU: {enq.convertedSku}
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleConvertToVariant(enq.id)}
+                              className="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
+                              title="इस कस्टम नाप को नियमित कैटलॉग वेरियंट में जोड़ें"
+                            >
+                              <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+                              <span>मानक वेरियंट में बदलें (Convert to SKU)</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {enq.statusNotes && (
+                        <div className="text-[11px] text-slate-500 bg-amber-50/60 p-2 rounded-lg border border-amber-100">
+                          <strong>नोट्स:</strong> {enq.statusNotes}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="bg-white p-8 text-center rounded-2xl border border-stone-200 text-xs text-slate-500">
+                    कोई कस्टम पूछताछ दर्ज नहीं है।
+                  </div>
+                )}
               </div>
             </div>
           )}
