@@ -1,84 +1,84 @@
 {
   "site": {
     "name": "Jain Sarafa Thella",
-    "tagline": "Agra's Trusted Jewellery & Packaging Bag Manufacturer",
-    "location": "Chowk, Sarafa Bazar, Agra, Uttar Pradesh",
+    "tagline": "Agra Sarafa's 35-Year Heritage in Premium Jewellery Pouches & Specialty Bag Manufacturing",
+    "location": "Chowk, Sarafa Bazar, Agra, Uttar Pradesh - 282001",
     "phone": "+91 98765 43210"
   },
   "nav": {
     "home": "Home",
-    "catalog": "All Products",
+    "catalog": "Product Catalog",
     "pouches": "Jewellery Pouches",
     "cottonBags": "Cotton Thellas",
     "weddingBags": "Wedding & Gift Bags",
-    "wholesale": "Wholesale Portal",
-    "customOrder": "Custom Enquiry",
+    "wholesale": "Wholesale B2B Portal",
+    "customOrder": "Custom Branding & Printing",
     "trackOrder": "Track Order",
     "cart": "Cart",
     "login": "Login"
   },
   "hero": {
-    "badge": "Direct from Agra Manufacturing Unit",
-    "title": "Premium Packaging Bags for Jewellery & Special Occasions",
-    "subtitle": "Velvet potlis, zari drawstring pouches, 100% eco-friendly cotton bags, and customized branding. Available at factory retail and wholesale rates.",
+    "badge": "Direct from Agra Manufacturing Facility • 100% Authentic",
+    "title": "Engineered Packaging for Precious Jewellery & Heavy Bullion",
+    "subtitle": "280 GSM plush velvet potlis, 16 oz industrial bullion carrier thellas, and metallic hot-foil showroom bags. Factory-direct pricing with zero middlemen markups.",
     "ctaRetail": "Shop Retail Collection",
-    "ctaWholesale": "View Wholesale Pricing",
+    "ctaWholesale": "Access Wholesale Tiers (B2B)",
     "ctaCustom": "Order Custom Branding"
   },
   "features": {
-    "quality": "Superior Craftsmanship",
-    "qualityDesc": "Premium velvet, satin, and heavy-duty organic cotton fabrics.",
-    "pricing": "Direct Manufacturer Rates",
-    "pricingDesc": "Best retail and wholesale prices with zero middlemen markups.",
-    "custom": "Gold Foil & Screen Printing",
-    "customDesc": "Precision stamping with your jewellery brand logo and details.",
-    "delivery": "Pan-India Secure Shipping",
-    "deliveryDesc": "Safe doorstep delivery with live tracking across India."
+    "quality": "Certified Raw Materials",
+    "qualityDesc": "280+ GSM velvet, anti-tarnish silk lining, and 16 oz heavy-duty duck canvas.",
+    "pricing": "Transparent Factory Rates",
+    "pricingDesc": "Transparent retail and wholesale pricing slabs straight from the production floor.",
+    "custom": "Gold & Silver Hot Foil Stamping",
+    "customDesc": "Crisp metallic stamping with your showroom name, address, and statutory hallmarks.",
+    "delivery": "Secure Pan-India Logistics",
+    "deliveryDesc": "Doorstep insured delivery with real-time GPS courier tracking across India."
   },
   "categories": {
-    "all": "All Categories",
-    "velvet": "Velvet Pouches",
-    "cotton": "Cotton Thellas",
-    "suede": "Suede Envelopes"
+    "all": "All Collections",
+    "velvet": "Velvet Jewellery Pouches",
+    "cotton": "Bullion & Cotton Thellas",
+    "suede": "Showroom Luxury Bags"
   },
   "products": {
-    "featuredTitle": "Featured Best-Sellers",
-    "featuredSubtitle": "Top choice of jewelers and retail clients across North India",
+    "featuredTitle": "Curated Best-Sellers (प्रमुख संग्रह)",
+    "featuredSubtitle": "The preferred choice of master jewellers, bullion traders, and retail boutiques across India",
     "viewAll": "Explore All 50+ Products",
-    "readyStock": "Ready Stock",
+    "readyStock": "Ready Stock Available",
     "madeToOrder": "Made to Order",
-    "customOnly": "Custom Print",
+    "customOnly": "Custom Print Available",
     "moq": "MOQ:",
     "pieces": "pcs",
-    "perPiece": "/ pc",
+    "perPiece": "/ piece",
     "addToCart": "Add to Cart",
-    "requestQuote": "Request Quote"
+    "requestQuote": "Request Wholesale Quote"
   },
   "wholesale": {
-    "bannerTitle": "Are You a Jeweler or Retail Merchant?",
-    "bannerSubtitle": "Access tiered wholesale rates from 50 to 10,000+ pieces with GST input credit tax invoices.",
-    "registerCta": "Register Wholesale Account",
-    "loginCta": "Wholesale Login"
+    "bannerTitle": "Are You a Jeweller, Bullion Trader, or Wholesaler?",
+    "bannerSubtitle": "Procure factory-direct in bulk batches from 25 to 10,000+ pieces with valid GST input credit tax invoices.",
+    "registerCta": "Register Verified Wholesale Account",
+    "loginCta": "Wholesale Partner Login"
   },
   "custom": {
-    "title": "Get Customized Bags with Your Brand Name",
-    "subtitle": "Tailored sizes, colors, fabrics, and your custom logo. Minimum 250 pieces.",
-    "formTitle": "Bespoke Manufacturing Enquiry",
-    "name": "Your Name / Firm Name",
+    "title": "Bespoke Bags Customized with Your Jewellery Showroom Branding",
+    "subtitle": "Your custom dimensions, chosen fabric GSM, and metallic hot foil logo. Batches starting at 50 pieces.",
+    "formTitle": "Bespoke Manufacturing Enquiry Form",
+    "name": "Your Name / Showroom Name",
     "phone": "WhatsApp Mobile Number",
-    "bagType": "Bag Style",
-    "quantity": "Required Quantity (pcs)",
-    "submit": "Get Free Quotation"
+    "bagType": "Bag Style & Silhouette",
+    "quantity": "Target Quantity (pieces)",
+    "submit": "Get Instant Production Estimate"
   },
   "footer": {
-    "about": "Jain Sarafa Thella is Agra's premier packaging manufacturer, crafting heritage-grade jewellery pouches and commercial shopping bags for Indian jewellers and celebratory events for decades.",
+    "about": "Jain Sarafa Thella is Agra's premier packaging manufacturer, engineering heritage-grade jewellery pouches, heavy cash/bullion transport thellas, and custom-branded showroom bags for Indian jewellers for over three decades.",
     "quickLinks": "Quick Links",
-    "legal": "Legal & Policies",
-    "privacy": "Privacy Policy (DPDP)",
+    "legal": "Statutory & Policies",
+    "privacy": "Privacy Policy (DPDP Act 2023)",
     "terms": "Terms of Service",
     "returns": "Returns & Refund Policy",
-    "shipping": "Shipping & Fulfilment",
-    "compliance": "Registered under Consumer Protection (E-Commerce) Rules, 2020. Grievance Officer: Shri R. K. Jain (grievance@jainsarafathella.com).",
-    "rights": "All rights reserved. Jain Sarafa Thella, Agra."
+    "shipping": "Shipping & Freight Policy",
+    "compliance": "Registered under Consumer Protection (E-Commerce) Rules, 2020. Resident Grievance Officer: Shri R. K. Jain (grievance@jainsarafathella.com).",
+    "rights": "All rights reserved. Jain Sarafa Thella, Agra (U.P.), India."
   }
 }

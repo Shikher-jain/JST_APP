@@ -33,8 +33,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        hindi: ["Noto Sans Devanagari", "sans-serif"],
-        sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["'Rozha One'", "'Cinzel'", "serif"],
+        heading: ["'Cinzel'", "'Rozha One'", "serif"],
+        hindi: ["'Noto Sans Devanagari'", "sans-serif"],
+        sans: ["'Plus Jakarta Sans'", "'Noto Sans Devanagari'", "system-ui", "sans-serif"],
       },
     },
   },

@@ -10,15 +10,43 @@
     --maroon-dark: #3F071D;
     --gold-accent: #D4AF37;
     --gold-light: #F3E5AB;
+    --gold-deep: #85581A;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     background-color: #FAF8F5;
     color: #1E293B;
-    font-family: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+
+  /* Devanagari Typography Breathability */
+  [lang="hi"], .font-hindi {
+    font-family: 'Noto Sans Devanagari', -apple-system, sans-serif;
+    line-height: 1.65;
+  }
+
+  h1, h2, h3, h4 {
+    letter-spacing: -0.015em;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* High-Contrast Accessible Gold & Bronze Text */
+.text-gold-readable {
+  color: #92641A;
+}
+
+.text-gold-deep {
+  color: #784F10;
 }
 
 /* Custom Gold & Maroon Gradients */
