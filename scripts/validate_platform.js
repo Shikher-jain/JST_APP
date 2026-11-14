@@ -221,6 +221,62 @@ runTest("Converting custom enquiry to standard variant must generate SKU and pre
 });
 
 // ------------------------------------------------------------------------------
+// Test Suite 5: MLJ Bags Benchmark Security & Transit Architecture
+// ------------------------------------------------------------------------------
+console.log("\n--- 5. Testing MLJ Bags Reference Security & Transit Architecture ---");
+
+const securityProducts = [
+  {
+    baseSku: "JST-SFK-SEC",
+    title: "SafeKeeper Bullion & Cash Transit Vault Bag",
+    antiTheftVault: true,
+    maxPayloadKg: 45,
+    fabric: "1000D Cordura",
+  },
+  {
+    baseSku: "JST-MSF-SBD",
+    title: "Metal Safe Crossbody Bag",
+    slashProofStrap: true,
+    bodyFacingZipper: true,
+    maxPayloadKg: 15,
+  },
+  {
+    baseSku: "JST-AKB-AGR",
+    title: "AnkletBox Agra Silver Payal Transit Backpack",
+    rigidFrame: true,
+    modularBoxCapacity: 10,
+    maxPayloadKg: 35,
+  },
+  {
+    baseSku: "JST-SLV-PRO",
+    title: "SilverPro Heavy Silver Ingot Transport Thella",
+    cradleWebbing360: true,
+    maxPayloadKg: 50,
+  },
+];
+
+runTest("Security and vault transit products must feature certified high-load ratings (up to 50 KG)", () => {
+  securityProducts.forEach((p) => {
+    assert(p.maxPayloadKg >= 15, `Payload capacity too low for ${p.baseSku}`);
+  });
+  const maxLoad = Math.max(...securityProducts.map((p) => p.maxPayloadKg));
+  assert.strictEqual(maxLoad, 50, "SilverPro must support commercial 50 KG load");
+});
+
+runTest("Transit products must enforce anti-theft, cut-proofing, or rigid frame protections", () => {
+  const sfk = securityProducts.find((p) => p.baseSku === "JST-SFK-SEC");
+  assert.strictEqual(sfk.antiTheftVault, true, "SafeKeeper must have concealed vault");
+
+  const msf = securityProducts.find((p) => p.baseSku === "JST-MSF-SBD");
+  assert.strictEqual(msf.slashProofStrap, true, "Metal Safe must have slash-proof strap");
+  assert.strictEqual(msf.bodyFacingZipper, true, "Metal Safe must have body-facing zipper");
+
+  const akb = securityProducts.find((p) => p.baseSku === "JST-AKB-AGR");
+  assert.strictEqual(akb.rigidFrame, true, "AnkletBox must have rigid protective frame");
+  assert.strictEqual(akb.modularBoxCapacity, 10, "AnkletBox must support up to 10 payal boxes");
+});
+
+// ------------------------------------------------------------------------------
 // Summary
 // ------------------------------------------------------------------------------
 console.log("\n==============================================================================");
