@@ -1564,55 +1564,148 @@ export default function AdminDashboardPage() {
           {/* TAB 5: SYNC ENGINE */}
           {activeTab === "sync" && (
             <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900 font-hindi">
-                  सिंक्रोनाइज़ेशन इंजन एवं ऑडिट लॉग (Sync Engine & Audit Logs)
-                </h2>
-                <p className="text-xs text-slate-500">
-                  वेबसाइट और Google सेवाओं के बीच स्वचालित डेटा डिलीवरी व बैकऑफ़ रिट्री।
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 font-hindi flex items-center gap-2">
+                    <RefreshCw className="w-5 h-5 text-sarafa-maroon" />
+                    सिंक्रोनाइज़ेशन इंजन एवं ऑडिट लॉग (Sync Engine & Audit Logs)
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    वेबसाइट, Google Business Profile (Section 8.2) व Google Maps के बीच स्वचालित डेटा डिलीवरी व बैकऑफ़ रिट्री।
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => triggerSync("google_business_profile")}
+                    disabled={isSyncing}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs flex items-center gap-2 transition-all disabled:opacity-60"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin" : ""}`} />
+                    <span>Google Business सिंक</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => triggerSync("website")}
+                    disabled={isSyncing}
+                    className="bg-sarafa-maroon hover:bg-sarafa-maroon-dark text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs flex items-center gap-2 transition-all disabled:opacity-60"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin" : ""}`} />
+                    <span>वेबसाइट सिंक</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Status Destination Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white p-5 rounded-2xl border border-emerald-200 shadow-xs">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-slate-900 text-sm">1. JST Storefront</span>
+                    <span className="text-[10px] bg-emerald-700 text-white px-2 py-0.5 rounded-full font-semibold">
+                      LIVE SYNCED
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 mb-3">
+                    सार्वजनिक ई-कॉमर्स कैटलॉग, रिटेल चेकआउट एवं थोक बी2बी दरें।
+                  </p>
+                  <div className="text-[11px] text-slate-500 font-mono">
+                    सक्रिय उत्पाद: {syncStatus?.stats?.totalProducts || products.length} • वेरियंट्स: {syncStatus?.stats?.totalVariants || totalVariants}
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-blue-200 shadow-xs">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-slate-900 text-sm">2. Google Business Profile</span>
+                    <span className="text-[10px] bg-blue-700 text-white px-2 py-0.5 rounded-full font-semibold">
+                      DISPATCHED
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 mb-3">
+                    आगरा प्रतिष्ठान का पता, समय, फोन एवं Section 8.2 अनुमोदित फोटो।
+                  </p>
+                  <div className="text-[11px] text-slate-500 font-mono">
+                    स्वीकृत Google फोटो: {syncStatus?.stats?.eligibleGooglePhotos || 2} चित्र
+                  </div>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-amber-200 shadow-xs">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-slate-900 text-sm">3. Google Maps Listing</span>
+                    <span className="text-[10px] bg-emerald-700 text-white px-2 py-0.5 rounded-full font-semibold">
+                      ACTIVE
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 mb-3">
+                    चौक सराफा बाजार में स्थित जीपीएस लोकेशन व ग्राहक समीक्षाएं।
+                  </p>
+                  <div className="text-[11px] text-slate-500 font-mono">
+                    GPS: 27.1856° N, 78.0142° E
+                  </div>
+                </div>
               </div>
 
               {/* Sync Dashboard Table */}
               <div className="bg-white rounded-2xl border border-stone-200 shadow-xs overflow-hidden">
                 <div className="p-4 bg-stone-50 border-b border-stone-200 flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-700">हालिया सिंक्रोनाइज़ेशन जॉब्स (Sync Jobs)</span>
-                  <span className="text-[11px] text-emerald-700 font-semibold">0 विफल (No Failures)</span>
+                  <span className="text-xs font-bold text-slate-800">
+                    हालिया सिंक्रोनाइज़ेशन व ऑडिट ट्रेल्स (Sync Jobs & Audit Trail)
+                  </span>
+                  <span className="text-[11px] text-emerald-700 font-semibold">
+                    ✓ सक्रिय डिस्पैचर वर्कर (0 विफल)
+                  </span>
                 </div>
-                <table className="w-full text-xs text-left">
-                  <thead className="bg-stone-50 text-slate-500 uppercase tracking-wider text-[10px] border-b border-stone-200">
-                    <tr>
-                      <th className="p-3">जॉब आईडी</th>
-                      <th className="p-3">लक्ष्य प्लेटफ़ॉर्म</th>
-                      <th className="p-3">ऑपरेशन</th>
-                      <th className="p-3">स्थिति</th>
-                      <th className="p-3">समय</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-stone-100">
-                    {syncStatus?.recentJobs ? (
-                      syncStatus.recentJobs.map((job: any) => (
-                        <tr key={job.id} className="hover:bg-amber-50/40">
-                          <td className="p-3 font-mono font-semibold text-slate-700">{job.id}</td>
-                          <td className="p-3 capitalize font-medium text-slate-800">{job.target.replace(/_/g, " ")}</td>
-                          <td className="p-3 uppercase font-mono text-[11px] text-slate-600">{job.operation}</td>
-                          <td className="p-3">
-                            <span className="bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full text-[10px]">
-                              {job.status}
-                            </span>
-                          </td>
-                          <td className="p-3 text-slate-500 text-[11px]">{new Date(job.updatedAt).toLocaleTimeString()}</td>
-                        </tr>
-                      ))
-                    ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-stone-50 text-slate-500 uppercase tracking-wider text-[10px] border-b border-stone-200">
                       <tr>
-                        <td colSpan={5} className="p-4 text-center text-slate-500">
-                          जॉब लोड हो रहे हैं...
-                        </td>
+                        <th className="p-3">जॉब आईडी</th>
+                        <th className="p-3">लक्ष्य प्लेटफ़ॉर्म</th>
+                        <th className="p-3">ऑपरेशन</th>
+                        <th className="p-3">डिस्पैच विवरण (Payload Summary)</th>
+                        <th className="p-3">स्थिति</th>
+                        <th className="p-3">समय</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100">
+                      {syncStatus?.recentJobs && syncStatus.recentJobs.length > 0 ? (
+                        syncStatus.recentJobs.map((job: any) => (
+                          <tr key={job.id} className="hover:bg-amber-50/40">
+                            <td className="p-3 font-mono font-semibold text-slate-800">{job.id}</td>
+                            <td className="p-3 capitalize font-semibold text-slate-800">
+                              {(job.targetPlatform || job.target || "").replace(/_/g, " ")}
+                            </td>
+                            <td className="p-3 uppercase font-mono text-[10px] text-slate-600">
+                              {job.operation}
+                            </td>
+                            <td className="p-3 text-slate-600 max-w-xs truncate" title={job.payloadSummary}>
+                              {job.payloadSummary || "Location metadata & hours dispatch"}
+                            </td>
+                            <td className="p-3">
+                              <span className="bg-emerald-100 text-emerald-800 font-semibold px-2 py-0.5 rounded-full text-[10px] border border-emerald-300">
+                                {job.status}
+                              </span>
+                            </td>
+                            <td className="p-3 text-slate-500 text-[11px] font-mono">
+                              {job.createdAt
+                                ? new Date(job.createdAt).toLocaleTimeString()
+                                : job.updatedAt
+                                ? new Date(job.updatedAt).toLocaleTimeString()
+                                : "अभी-अभी"}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={6} className="p-4 text-center text-slate-500">
+                            कोई सिंक जॉब रिकॉर्ड नहीं है।
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
