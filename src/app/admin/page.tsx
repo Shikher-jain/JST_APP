@@ -34,7 +34,9 @@ import {
   Check,
   X,
   Filter,
-  Eye
+  Eye,
+  Plus,
+  Edit3
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -55,11 +57,41 @@ export default function AdminDashboardPage() {
   const [mediaFilter, setMediaFilter] = useState<"all" | "pending" | "approved_web" | "approved_google" | "rejected">("all");
   const [mediaActionMessage, setMediaActionMessage] = useState<string | null>(null);
 
+  // Products & Mutation States
+  const [products, setProducts] = useState<any[]>(initialProducts);
+  const [showNewProductModal, setShowNewProductModal] = useState(false);
+  const [showNewVariantForProduct, setShowNewVariantForProduct] = useState<any | null>(null);
+  const [editingStockForSku, setEditingStockForSku] = useState<string | null>(null);
+  const [stockInputVal, setStockInputVal] = useState<number>(0);
+
+  // New Product Form State
+  const [newBaseSku, setNewBaseSku] = useState("");
+  const [newTitleHi, setNewTitleHi] = useState("");
+  const [newTitleEn, setNewTitleEn] = useState("");
+  const [newDescHi, setNewDescHi] = useState("");
+  const [newCategory, setNewCategory] = useState("security_transit");
+  const [newMaterial, setNewMaterial] = useState("मजबूत कैनवास व वाटरप्रूफ अस्तर");
+  const [newRetailPrice, setNewRetailPrice] = useState(150);
+  const [newWholesalePrice, setNewWholesalePrice] = useState(110);
+  const [newMoq, setNewMoq] = useState(50);
+  const [newStock, setNewStock] = useState(100);
+
+  // New Variant Form State
+  const [vSku, setVSku] = useState("");
+  const [vSizeHi, setVSizeHi] = useState("");
+  const [vSizeEn, setVSizeEn] = useState("");
+  const [vLength, setVLength] = useState(12);
+  const [vWidth, setVWidth] = useState(14);
+  const [vUnit, setVUnit] = useState<"inch" | "cm">("inch");
+  const [vCapacity, setVCapacity] = useState("30 KG");
+  const [vRetailPrice, setVRetailPrice] = useState(160);
+  const [vWholesalePrice, setVWholesalePrice] = useState(120);
+  const [vStock, setVStock] = useState(50);
+
   const profile = jstBusinessProfile;
-  const products = initialProducts;
   const totalVariants = products.reduce((acc, p) => acc + p.variants.length, 0);
   const totalStock = products.reduce(
-    (acc, p) => acc + p.variants.reduce((vAcc, v) => vAcc + v.physicalStock, 0),
+    (acc, p) => acc + p.variants.reduce((vAcc: number, v: any) => vAcc + v.physicalStock, 0),
     0
   );
 
@@ -94,6 +126,15 @@ export default function AdminDashboardPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.items) setScannedMedia(data.items);
+      })
+      .catch(() => {});
+
+    fetch("/api/admin/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.products && Array.isArray(data.products)) {
+          setProducts(data.products);
+        }
       })
       .catch(() => {});
   }, [router]);
@@ -213,6 +254,133 @@ export default function AdminDashboardPage() {
     setConvertedCdnUrl(directUrl);
     const parsed = GoogleDriveAdapter.parseFileName(testDriveLink.trim());
     setParsedFileNameResult(parsed);
+  };
+
+  const handleCreateProductSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "create_product",
+          productData: {
+            baseSku: newBaseSku,
+            titleHi: newTitleHi,
+            titleEn: newTitleEn,
+            descriptionHi: newDescHi,
+            descriptionEn: newTitleEn,
+            categorySlug: newCategory,
+            materialHi: newMaterial,
+            materialEn: "Premium Heavy-Duty Fabric",
+            initialVariant: {
+              sizeLabelHi: "मानक (Standard)",
+              sizeLabelEn: "Standard",
+              length: 12,
+              width: 14,
+              height: 4,
+              unit: "inch",
+              loadCapacity: "25 KG",
+              retailPrice: Number(newRetailPrice),
+              wholesalePrice: Number(newWholesalePrice),
+              moqWholesale: Number(newMoq),
+              physicalStock: Number(newStock),
+            },
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.product) {
+        setProducts((prev) => [data.product, ...prev]);
+        setShowNewProductModal(false);
+        setNewBaseSku("");
+        setNewTitleHi("");
+        setNewTitleEn("");
+        setNewDescHi("");
+        alert(data.message);
+      } else {
+        alert(data.message || "Failed to create product");
+      }
+    } catch {
+      alert("Product creation error");
+    }
+  };
+
+  const handleAddVariantSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!showNewVariantForProduct) return;
+
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "add_variant",
+          productId: showNewVariantForProduct.id,
+          variantData: {
+            variantSku: vSku,
+            sizeLabelHi: vSizeHi,
+            sizeLabelEn: vSizeEn,
+            length: Number(vLength),
+            width: Number(vWidth),
+            unit: vUnit,
+            loadCapacity: vCapacity,
+            retailPrice: Number(vRetailPrice),
+            wholesalePrice: Number(vWholesalePrice),
+            physicalStock: Number(vStock),
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.variant) {
+        setProducts((prev) =>
+          prev.map((p) =>
+            p.id === showNewVariantForProduct.id
+              ? { ...p, variants: [...p.variants, data.variant] }
+              : p
+          )
+        );
+        setShowNewVariantForProduct(null);
+        setVSku("");
+        setVSizeHi("");
+        setVSizeEn("");
+        alert(data.message);
+      } else {
+        alert(data.message || "Failed to add variant");
+      }
+    } catch {
+      alert("Add variant error");
+    }
+  };
+
+  const handleSaveStock = async (variantSku: string) => {
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "update_stock",
+          variantSku,
+          stock: Number(stockInputVal),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProducts((prev) =>
+          prev.map((p) => ({
+            ...p,
+            variants: p.variants.map((v: any) =>
+              v.variantSku === variantSku ? { ...v, physicalStock: Number(stockInputVal) } : v
+            ),
+          }))
+        );
+        setEditingStockForSku(null);
+      } else {
+        alert(data.message || "Failed to update stock");
+      }
+    } catch {
+      alert("Stock update error");
+    }
   };
 
   if (loadingSession) {
@@ -505,17 +673,331 @@ export default function AdminDashboardPage() {
           {/* TAB 2: PRODUCTS */}
           {activeTab === "products" && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900 font-hindi">
+                  <h2 className="text-xl font-bold text-slate-900 font-hindi flex items-center gap-2">
+                    <Package className="w-5 h-5 text-sarafa-maroon" />
                     उत्पाद एवं नाप-वेरियंट प्रबंधन (Products & Size Variants)
                   </h2>
                   <p className="text-xs text-slate-500">
-                    मूल उत्पाद (Parent Product) के अधीन प्रत्येक नाप का अपना SKU, फोटो व दर स्लैब।
+                    मूल उत्पाद (Parent Product) के अधीन प्रत्येक नाप का अपना SKU, फोटो, भौतिक स्टॉक व दर स्लैब।
                   </p>
                 </div>
+
+                {hasRoleAccess(userRole, ["super_admin", "admin_ops"]) && (
+                  <button
+                    type="button"
+                    onClick={() => setShowNewProductModal(true)}
+                    className="bg-sarafa-maroon hover:bg-sarafa-maroon-dark text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs flex items-center gap-2 transition-all shrink-0"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>नया उत्पाद जोड़ें (Add Product)</span>
+                  </button>
+                )}
               </div>
 
+              {/* Product Creation Modal */}
+              {showNewProductModal && (
+                <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                  <div className="bg-white rounded-3xl border border-stone-200 shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto font-sans">
+                    <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                      <div>
+                        <h3 className="text-base font-bold text-slate-900 font-hindi">
+                          नया उत्पाद जोड़ें (Create Parent Product)
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          कैटलॉग में नया आधार उत्पाद एवं उसका प्रारंभिक मानक वेरियंट पंजीकृत करें।
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowNewProductModal(false)}
+                        className="text-slate-400 hover:text-slate-600 p-1"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleCreateProductSubmit} className="space-y-3 text-xs">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">
+                            मूल SKU (Base SKU) *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={newBaseSku}
+                            onChange={(e) => setNewBaseSku(e.target.value.toUpperCase())}
+                            placeholder="JST-NEW-PROD"
+                            className="w-full p-2 border border-stone-300 rounded-lg font-mono text-slate-900 uppercase"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">
+                            कैटलॉग श्रेणी *
+                          </label>
+                          <select
+                            value={newCategory}
+                            onChange={(e) => setNewCategory(e.target.value)}
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          >
+                            <option value="security_transit">सुरक्षा एवं वॉल्ट ट्रांजिट</option>
+                            <option value="luxury_packaging">शाही मखमली पोटली व पाउच</option>
+                            <option value="wholesale_boxes">थोक पायल व ज्वेलरी बॉक्स</option>
+                            <option value="retail_counter">प्रीमियम शोरूम कैरी बैग</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block font-semibold text-slate-700 mb-1">
+                          उत्पाद नाम (हिन्दी) *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={newTitleHi}
+                          onChange={(e) => setNewTitleHi(e.target.value)}
+                          placeholder="उदा. हैवी बुलियन सुरक्षा बैग"
+                          className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-semibold text-slate-700 mb-1">
+                          Product Name (English) *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={newTitleEn}
+                          onChange={(e) => setNewTitleEn(e.target.value)}
+                          placeholder="e.g. Heavy Bullion Transit Bag"
+                          className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-semibold text-slate-700 mb-1">
+                          संक्षिप्त विवरण (Hindi Description)
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={newDescHi}
+                          onChange={(e) => setNewDescHi(e.target.value)}
+                          placeholder="उत्पाद की सामग्री, सुरक्षा और उपयोगिता..."
+                          className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">खुदरा दर (₹)</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={newRetailPrice}
+                            onChange={(e) => setNewRetailPrice(Number(e.target.value))}
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">थोक दर (₹)</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={newWholesalePrice}
+                            onChange={(e) => setNewWholesalePrice(Number(e.target.value))}
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">प्रारंभिक स्टॉक</label>
+                          <input
+                            type="number"
+                            min={0}
+                            value={newStock}
+                            onChange={(e) => setNewStock(Number(e.target.value))}
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t border-stone-100 flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowNewProductModal(false)}
+                          className="px-4 py-2 rounded-lg border border-stone-300 text-slate-700 font-semibold"
+                        >
+                          रद्द करें
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-5 py-2 rounded-lg bg-sarafa-maroon hover:bg-sarafa-maroon-dark text-white font-bold"
+                        >
+                          उत्पाद सुरक्षित करें
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+
+              {/* Variant Creation Modal */}
+              {showNewVariantForProduct && (
+                <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                  <div className="bg-white rounded-3xl border border-stone-200 shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto font-sans">
+                    <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+                      <div>
+                        <h3 className="text-base font-bold text-slate-900 font-hindi">
+                          नया साइज़ / वेरियंट जोड़ें (Add Size Variant)
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          मूल उत्पाद: <strong className="text-slate-800">{showNewVariantForProduct.baseSku}</strong> ({showNewVariantForProduct.title.hi})
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowNewVariantForProduct(null)}
+                        className="text-slate-400 hover:text-slate-600 p-1"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleAddVariantSubmit} className="space-y-3 text-xs">
+                      <div>
+                        <label className="block font-semibold text-slate-700 mb-1">
+                          वेरियंट SKU (Variant SKU) *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={vSku}
+                          onChange={(e) => setVSku(e.target.value.toUpperCase())}
+                          placeholder={`${showNewVariantForProduct.baseSku}-XL`}
+                          className="w-full p-2 border border-stone-300 rounded-lg font-mono text-slate-900 uppercase"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">
+                            नाप विवरण (हिन्दी) *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={vSizeHi}
+                            onChange={(e) => setVSizeHi(e.target.value)}
+                            placeholder="उदा. बड़ा साइज़ (14x16 इंच)"
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">
+                            Size Label (English) *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={vSizeEn}
+                            onChange={(e) => setVSizeEn(e.target.value)}
+                            placeholder="e.g. Large (14x16 inch)"
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">लंबाई (Length)</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={vLength}
+                            onChange={(e) => setVLength(Number(e.target.value))}
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">चौड़ाई (Width)</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={vWidth}
+                            onChange={(e) => setVWidth(Number(e.target.value))}
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">इकाई (Unit)</label>
+                          <select
+                            value={vUnit}
+                            onChange={(e) => setVUnit(e.target.value as any)}
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          >
+                            <option value="inch">इंच (Inches)</option>
+                            <option value="cm">सेमी (Centimeters)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">खुदरा दर (₹)</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={vRetailPrice}
+                            onChange={(e) => setVRetailPrice(Number(e.target.value))}
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">थोक दर (₹)</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={vWholesalePrice}
+                            onChange={(e) => setVWholesalePrice(Number(e.target.value))}
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          />
+                        </div>
+                        <div>
+                          <label className="block font-semibold text-slate-700 mb-1">प्रारंभिक स्टॉक</label>
+                          <input
+                            type="number"
+                            min={0}
+                            value={vStock}
+                            onChange={(e) => setVStock(Number(e.target.value))}
+                            className="w-full p-2 border border-stone-300 rounded-lg text-slate-900"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t border-stone-100 flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowNewVariantForProduct(null)}
+                          className="px-4 py-2 rounded-lg border border-stone-300 text-slate-700 font-semibold"
+                        >
+                          रद्द करें
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-5 py-2 rounded-lg bg-sarafa-maroon hover:bg-sarafa-maroon-dark text-white font-bold"
+                        >
+                          वेरियंट जोड़ें
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+
+              {/* Product List */}
               <div className="space-y-4">
                 {products.map((p) => (
                   <div key={p.id} className="bg-white p-5 rounded-xl border border-stone-200 shadow-xs space-y-4">
@@ -528,14 +1010,31 @@ export default function AdminDashboardPage() {
                           {p.title.hi} / {p.title.en}
                         </h3>
                       </div>
-                      <Link
-                        href={`/products/${p.slug}`}
-                        target="_blank"
-                        className="text-xs font-semibold text-sarafa-maroon hover:underline flex items-center gap-1"
-                      >
-                        <span>लाइव पेज देखें</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </Link>
+                      
+                      <div className="flex items-center gap-3">
+                        {hasRoleAccess(userRole, ["super_admin", "admin_ops"]) && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowNewVariantForProduct(p);
+                              setVSku(`${p.baseSku}-`);
+                            }}
+                            className="bg-stone-100 hover:bg-stone-200 text-slate-800 text-xs font-semibold px-3 py-1.5 rounded-lg border border-stone-300 flex items-center gap-1.5 transition-colors"
+                          >
+                            <Plus className="w-3.5 h-3.5 text-sarafa-maroon" />
+                            <span>नया वेरियंट</span>
+                          </button>
+                        )}
+
+                        <Link
+                          href={`/products/${p.slug}`}
+                          target="_blank"
+                          className="text-xs font-semibold text-sarafa-maroon hover:underline flex items-center gap-1"
+                        >
+                          <span>लाइव पेज देखें</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </Link>
+                      </div>
                     </div>
 
                     {/* Variant Table */}
@@ -549,29 +1048,79 @@ export default function AdminDashboardPage() {
                             <th className="p-2.5">वहन क्षमता</th>
                             <th className="p-2.5">खुदरा दर</th>
                             <th className="p-2.5">थोक स्लैब</th>
-                            <th className="p-2.5">स्टॉक</th>
+                            <th className="p-2.5">भौतिक स्टॉक</th>
+                            <th className="p-2.5 text-right">स्टॉक संपादन</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-stone-100">
-                          {p.variants.map((v) => (
-                            <tr key={v.id} className="hover:bg-amber-50/40">
-                              <td className="p-2.5 font-mono font-semibold text-slate-800">{v.variantSku}</td>
-                              <td className="p-2.5 font-medium text-slate-700">{v.size.hi}</td>
-                              <td className="p-2.5 text-slate-600">
-                                {v.dimensionsDetail
-                                  ? `${v.dimensionsDetail.length}x${v.dimensionsDetail.width} ${v.dimensionsDetail.unit}`
-                                  : `${v.dimensionsCm.height}x${v.dimensionsCm.width} cm`}
-                              </td>
-                              <td className="p-2.5 text-slate-600">{v.loadCapacity || "मानक"}</td>
-                              <td className="p-2.5 font-bold text-sarafa-maroon">{formatCurrencyINR(v.retailPrice)}</td>
-                              <td className="p-2.5 text-emerald-700 font-semibold">
-                                {v.wholesaleTiers?.[0]
-                                  ? `${formatCurrencyINR(v.wholesaleTiers[0].pricePerUnit)} (${v.wholesaleTiers[0].minQty}+)`
-                                  : "—"}
-                              </td>
-                              <td className="p-2.5 font-semibold text-slate-800">{v.physicalStock} पीस</td>
-                            </tr>
-                          ))}
+                          {p.variants.map((v: any) => {
+                            const isEditingStock = editingStockForSku === v.variantSku;
+
+                            return (
+                              <tr key={v.id} className="hover:bg-amber-50/40">
+                                <td className="p-2.5 font-mono font-semibold text-slate-800">{v.variantSku}</td>
+                                <td className="p-2.5 font-medium text-slate-700">{v.size?.hi || v.size}</td>
+                                <td className="p-2.5 text-slate-600">
+                                  {v.dimensionsDetail
+                                    ? `${v.dimensionsDetail.length}x${v.dimensionsDetail.width} ${v.dimensionsDetail.unit}`
+                                    : `${v.dimensionsCm?.height || 10}x${v.dimensionsCm?.width || 12} cm`}
+                                </td>
+                                <td className="p-2.5 text-slate-600">{v.loadCapacity || "मानक"}</td>
+                                <td className="p-2.5 font-bold text-sarafa-maroon">{formatCurrencyINR(v.retailPrice)}</td>
+                                <td className="p-2.5 text-emerald-700 font-semibold">
+                                  {v.wholesaleTiers?.[0]
+                                    ? `${formatCurrencyINR(v.wholesaleTiers[0].pricePerUnit)} (${v.wholesaleTiers[0].minQty}+)`
+                                    : "—"}
+                                </td>
+                                <td className="p-2.5 font-semibold text-slate-800">
+                                  {isEditingStock ? (
+                                    <div className="flex items-center gap-1">
+                                      <input
+                                        type="number"
+                                        min={0}
+                                        value={stockInputVal}
+                                        onChange={(e) => setStockInputVal(Number(e.target.value))}
+                                        className="w-16 p-1 border border-stone-300 rounded text-xs font-semibold"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleSaveStock(v.variantSku)}
+                                        className="p-1 bg-emerald-600 text-white rounded hover:bg-emerald-700"
+                                        title="सुरक्षित करें"
+                                      >
+                                        <Check className="w-3.5 h-3.5" />
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => setEditingStockForSku(null)}
+                                        className="p-1 bg-stone-200 text-slate-700 rounded hover:bg-stone-300"
+                                        title="रद्द करें"
+                                      >
+                                        <X className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <span>{v.physicalStock} पीस</span>
+                                  )}
+                                </td>
+                                <td className="p-2.5 text-right">
+                                  {!isEditingStock && hasRoleAccess(userRole, ["super_admin", "admin_ops"]) && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setEditingStockForSku(v.variantSku);
+                                        setStockInputVal(v.physicalStock);
+                                      }}
+                                      className="text-stone-500 hover:text-slate-900 p-1 rounded hover:bg-stone-100 transition-colors"
+                                      title="स्टॉक अपडेट करें"
+                                    >
+                                      <Edit3 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>

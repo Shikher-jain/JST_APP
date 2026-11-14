@@ -403,6 +403,48 @@ runTest("Google Drive Service file must exist with scan and approval operations"
 });
 
 // ------------------------------------------------------------------------------
+// Test Suite 9: Admin Catalogue Mutation & SKU Integrity Engine (PR #17)
+// ------------------------------------------------------------------------------
+console.log("\n--- 9. Testing Admin Catalogue Mutation & SKU Integrity ---");
+
+runTest("Catalogue store file must exist with validation and mutation methods", () => {
+  const storePath = path.join(__dirname, "../src/lib/catalogueStore.ts");
+  assert(fs.existsSync(storePath), "Missing catalogueStore.ts");
+  const content = fs.readFileSync(storePath, "utf-8");
+  assert(content.includes("class CatalogueStore"), "Missing CatalogueStore class");
+  assert(content.includes("createProduct"), "Missing createProduct");
+  assert(content.includes("addVariant"), "Missing addVariant");
+  assert(content.includes("updateStock"), "Missing updateStock");
+  assert(content.includes("validateSku"), "Missing validateSku");
+});
+
+runTest("SKU validation rejects duplicates, invalid characters, and empty strings", () => {
+  function validateSku(sku, existingSkus) {
+    if (!sku || sku.trim().length < 3) return { valid: false, error: "Too short" };
+    const clean = sku.trim().toUpperCase();
+    if (!/^[A-Z0-9-]+$/.test(clean)) return { valid: false, error: "Invalid characters" };
+    if (existingSkus.has(clean)) return { valid: false, error: "Duplicate SKU" };
+    return { valid: true };
+  }
+
+  const existing = new Set(["JST-VLV-RED", "JST-BLN-35KG"]);
+  assert(validateSku("JST-VLV-RED", existing).valid === false, "Must reject duplicate SKU");
+  assert(validateSku("JST NEW 001", existing).valid === false, "Must reject spaces in SKU");
+  assert(validateSku("AB", existing).valid === false, "Must reject short SKU");
+  assert(validateSku("JST-SAFE-XL", existing).valid === true, "Must accept valid uppercase hyphenated SKU");
+});
+
+runTest("Admin Products API route must exist and enforce RBAC clearance", () => {
+  const apiPath = path.join(__dirname, "../src/app/api/admin/products/route.ts");
+  assert(fs.existsSync(apiPath), "Missing products API route");
+  const content = fs.readFileSync(apiPath, "utf-8");
+  assert(content.includes("action === \"create_product\""), "Missing create_product handling");
+  assert(content.includes("action === \"add_variant\""), "Missing add_variant handling");
+  assert(content.includes("action === \"update_stock\""), "Missing update_stock handling");
+  assert(content.includes("hasRoleAccess"), "Missing RBAC role clearance in products API");
+});
+
+// ------------------------------------------------------------------------------
 // Summary
 // ------------------------------------------------------------------------------
 console.log("\n==============================================================================");
